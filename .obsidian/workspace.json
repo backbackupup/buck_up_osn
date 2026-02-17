@@ -8,30 +8,6 @@
         "type": "tabs",
         "children": [
           {
-            "id": "207328ebfa0eebc6",
-            "type": "leaf",
-            "state": {
-              "type": "image",
-              "state": {
-                "file": "ЕГЭ/изображения/Pasted image 20260217001030.png"
-              },
-              "icon": "lucide-image",
-              "title": "Pasted image 20260217001030"
-            }
-          },
-          {
-            "id": "4885ebb2f246422f",
-            "type": "leaf",
-            "state": {
-              "type": "image",
-              "state": {
-                "file": "ЕГЭ/изображения/Pasted image 20260217000421.png"
-              },
-              "icon": "lucide-image",
-              "title": "Pasted image 20260217000421"
-            }
-          },
-          {
             "id": "153078c287cabe8d",
             "type": "leaf",
             "state": {
@@ -45,8 +21,7 @@
               "title": "Новый день"
             }
           }
-        ],
-        "currentTab": 2
+        ]
       }
     ],
     "direction": "vertical"
@@ -216,44 +191,44 @@
       "templates:Вставить шаблон": false,
       "command-palette:Открыть палитру команд": false,
       "bases:Создать новую базу": false,
-      "templater-obsidian:Templater": false,
-      "obsidian-git:Open Git source control": false
+      "obsidian-git:Open Git source control": false,
+      "templater-obsidian:Templater": false
     }
   },
   "active": "153078c287cabe8d",
   "lastOpenFiles": [
-    "ЕГЭ/календарь.md.md",
-    "ЕГЭ/sluj/cash/BASED3.md",
-    "ЕГЭ/Дни/2026_02_16.md",
+    "ЕГЭ/subjects/russ/r_zad11.md",
+    "ЕГЭ/изображения/Pasted image 20260218003025.png",
     "Новый день.md",
+    "ЕГЭ/Дни/2026_01_20.md",
+    "ЕГЭ/календарь.md.md",
+    "ЕГЭ/sluj/cash/BASED0.md",
+    "ЕГЭ/Дни/2026_02_16.md",
+    "ЕГЭ/sluj/cash/BASED2.md",
+    "ЕГЭ/subjects/infa/i_zad1.md",
     "ЕГЭ/subjects/infa/i_zad5.md",
+    "ЕГЭ/subjects/infa/infa_stat.md",
+    "ЕГЭ/subjects/infa/i_zad6.md",
+    "ЕГЭ/subjects/mat/mat_stat.md",
+    "ЕГЭ/subjects/mat/m_zad2.md",
+    "ЕГЭ/subjects/mat/m_zad1.md",
+    "ЕГЭ/subjects/infa/i_zad3.md",
+    "ЕГЭ/subjects/infa/i_zad2.md",
+    "ЕГЭ/Дни/2026_02_05.md",
+    "ЕГЭ/sluj/cash/BASED3.md",
     "ЕГЭ/изображения/Pasted image 20260216233034.png",
     "ЕГЭ/изображения/Pasted image 20260217000421.png",
     "ЕГЭ/изображения/Pasted image 20260217001030.png",
     "ЕГЭ/изображения",
-    "ЕГЭ/subjects/infa/i_zad6.md",
-    "ЕГЭ/subjects/infa/infa_stat.md",
     "ЕГЭ/subjects/russ/r_zad27.md",
-    "ЕГЭ/subjects/mat/mat_stat.md",
     "ЕГЭ/subjects/russ/russ_stat.md",
     "Pasted image 20260216173710.png",
-    "ЕГЭ/subjects/infa/i_zad2.md",
-    "ЕГЭ/subjects/infa/i_zad1.md",
     "ЕГЭ/Дни/2026_02_15.md",
     "temples/День.md",
     "temples/Сегодня.md",
     "skript/provmat_segod.js",
     "ЕГЭ/subjects/mat/m_zad6.md",
     "ЕГЭ/subjects/mat/m_zad5.md",
-    "ЕГЭ/subjects/mat/m_zad4.md",
-    "ЕГЭ/subjects/mat/m_zad3.md",
-    "ЕГЭ/subjects/mat/m_zad2.md",
-    "ЕГЭ/subjects/mat/m_zad1.md",
-    "ЕГЭ/sluj/Config.md",
-    "ЕГЭ/sluj/cash/BASED0.md",
-    "ЕГЭ/Дни/2026_02_14.md",
-    "ЕГЭ/Дни/2026_02_13.md",
-    "ЕГЭ/Дни/2026_02_12.md",
     "Без названия",
     "skript/plan.js",
     "skript/Новый текстовый документ.txt",
