@@ -1,0 +1,267 @@
+{
+  "main": {
+    "id": "ef7b200bb891c0da",
+    "type": "split",
+    "children": [
+      {
+        "id": "8a2e1e2872e8b771",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "207328ebfa0eebc6",
+            "type": "leaf",
+            "state": {
+              "type": "image",
+              "state": {
+                "file": "ЕГЭ/изображения/Pasted image 20260217001030.png"
+              },
+              "icon": "lucide-image",
+              "title": "Pasted image 20260217001030"
+            }
+          },
+          {
+            "id": "4885ebb2f246422f",
+            "type": "leaf",
+            "state": {
+              "type": "image",
+              "state": {
+                "file": "ЕГЭ/изображения/Pasted image 20260217000421.png"
+              },
+              "icon": "lucide-image",
+              "title": "Pasted image 20260217000421"
+            }
+          },
+          {
+            "id": "153078c287cabe8d",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "ЕГЭ/календарь.md.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "календарь.md"
+            }
+          }
+        ],
+        "currentTab": 2
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "d88273a5c403194e",
+    "type": "split",
+    "children": [
+      {
+        "id": "a9150e852987247d",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "dedfcf7125f65095",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical",
+                "autoReveal": false
+              },
+              "icon": "lucide-folder-closed",
+              "title": "Файловый менеджер"
+            }
+          },
+          {
+            "id": "ea4acb87bb275a09",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "fla",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              },
+              "icon": "lucide-search",
+              "title": "Поиск"
+            }
+          },
+          {
+            "id": "d1a9f92fd85f14ba",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {},
+              "icon": "lucide-bookmark",
+              "title": "Закладки"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 200
+  },
+  "right": {
+    "id": "b64103921e583cfa",
+    "type": "split",
+    "children": [
+      {
+        "id": "d468436fefbf56a1",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "ff543b6d94b3df3d",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-coming-in",
+              "title": "Обратные ссылки"
+            }
+          },
+          {
+            "id": "1bfa652fc261b266",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-going-out",
+              "title": "Исходящие ссылки"
+            }
+          },
+          {
+            "id": "31b159460c1e7905",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-tags",
+              "title": "Теги"
+            }
+          },
+          {
+            "id": "1ef15df77a0327d0",
+            "type": "leaf",
+            "state": {
+              "type": "all-properties",
+              "state": {
+                "sortOrder": "frequency",
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-archive",
+              "title": "Все свойства"
+            }
+          },
+          {
+            "id": "2add2c5fc0d55e54",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "followCursor": false,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-list",
+              "title": "Структура"
+            }
+          },
+          {
+            "id": "49c5f21ad4ac922b",
+            "type": "leaf",
+            "state": {
+              "type": "file-properties",
+              "state": {
+                "file": "test.md"
+              },
+              "icon": "lucide-info",
+              "title": "Свойства файла для test"
+            }
+          }
+        ],
+        "currentTab": 5
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "switcher:Меню быстрого перехода": false,
+      "graph:Граф": false,
+      "canvas:Создать новый холст": false,
+      "daily-notes:Сегодняшняя заметка": false,
+      "templates:Вставить шаблон": false,
+      "command-palette:Открыть палитру команд": false,
+      "bases:Создать новую базу": false,
+      "templater-obsidian:Templater": false
+    }
+  },
+  "active": "153078c287cabe8d",
+  "lastOpenFiles": [
+    "ЕГЭ/календарь.md.md",
+    "ЕГЭ/sluj/cash/BASED3.md",
+    "ЕГЭ/Дни/2026_02_16.md",
+    "Новый день.md",
+    "ЕГЭ/subjects/infa/i_zad5.md",
+    "ЕГЭ/изображения/Pasted image 20260216233034.png",
+    "ЕГЭ/изображения/Pasted image 20260217000421.png",
+    "ЕГЭ/изображения/Pasted image 20260217001030.png",
+    "ЕГЭ/изображения",
+    "ЕГЭ/subjects/infa/i_zad6.md",
+    "ЕГЭ/subjects/infa/infa_stat.md",
+    "ЕГЭ/subjects/russ/r_zad27.md",
+    "ЕГЭ/subjects/mat/mat_stat.md",
+    "ЕГЭ/subjects/russ/russ_stat.md",
+    "Pasted image 20260216173710.png",
+    "ЕГЭ/subjects/infa/i_zad2.md",
+    "ЕГЭ/subjects/infa/i_zad1.md",
+    "ЕГЭ/Дни/2026_02_15.md",
+    "temples/День.md",
+    "temples/Сегодня.md",
+    "skript/provmat_segod.js",
+    "ЕГЭ/subjects/mat/m_zad6.md",
+    "ЕГЭ/subjects/mat/m_zad5.md",
+    "ЕГЭ/subjects/mat/m_zad4.md",
+    "ЕГЭ/subjects/mat/m_zad3.md",
+    "ЕГЭ/subjects/mat/m_zad2.md",
+    "ЕГЭ/subjects/mat/m_zad1.md",
+    "ЕГЭ/sluj/Config.md",
+    "ЕГЭ/sluj/cash/BASED0.md",
+    "ЕГЭ/Дни/2026_02_14.md",
+    "ЕГЭ/Дни/2026_02_13.md",
+    "ЕГЭ/Дни/2026_02_12.md",
+    "Без названия",
+    "skript/plan.js",
+    "skript/Новый текстовый документ.txt",
+    "ЕГЭ/subjects/mat 1",
+    "ЕГЭ/subjects/infa 1",
+    "ЕГЭ/subjects/russ 1",
+    "Без названия.base",
+    "Без названия 1.base",
+    "Без названия 1.canvas",
+    "Без названия.canvas"
+  ]
+}
