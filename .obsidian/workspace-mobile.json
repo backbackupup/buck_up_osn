@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Новый день.md",
+                "file": "ЕГЭ/календарь.md.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Новый день"
+              "title": "календарь.md"
             }
           }
         ]
@@ -172,6 +172,20 @@
   },
   "active": "4479b00f0e981f3a",
   "lastOpenFiles": [
-    "/Новый день.md"
+    "Новый день.md",
+    "/Новый день.md",
+    "ЕГЭ/календарь.md.md",
+    "/ЕГЭ/календарь.md.md",
+    "/ЕГЭ/Дни/2026_02_18.md",
+    "ЕГЭ/Дни/2026_02_18.md",
+    "/ЕГЭ/Дни",
+    "/ЕГЭ/subjects/russ/russ_stat.md",
+    "/ЕГЭ/subjects/russ/r_zad11.md",
+    "/ЕГЭ/subjects/russ",
+    "/ЕГЭ/subjects",
+    "/ЕГЭ/sluj/cash/BASED4.md",
+    "/ЕГЭ/sluj/cash",
+    "/ЕГЭ/sluj",
+    "/ЕГЭ"
   ]
 }
