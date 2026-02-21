@@ -20,8 +20,23 @@
               "icon": "lucide-file",
               "title": "календарь.md"
             }
+          },
+          {
+            "id": "40a73492f53fefc0",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "ЕГЭ/Дни/2026_02_21.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "2026_02_21"
+            }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "vertical"
@@ -204,17 +219,22 @@
       "templater-obsidian:Templater": false
     }
   },
-  "active": "153078c287cabe8d",
+  "active": "40a73492f53fefc0",
   "lastOpenFiles": [
-    "ЕГЭ/Дни/2026_02_20.md",
     "Новый день.md",
-    "ЕГЭ/календарь.md.md",
     "Свои заметки/Для мэксуса/День 1.md",
-    "ЕГЭ/subjects/mat/m_zad3.md",
+    "Свои заметки/Для мэксуса/День 2.md",
+    "Свои заметки/Для мэксуса/Screenshot_20260220-004527.png",
+    "ЕГЭ/Дни/2026_02_21.md",
+    "ЕГЭ/subjects/russ/russ_stat.md",
+    "ЕГЭ/subjects/mat/mat_stat.md",
+    "ЕГЭ/subjects/infa/infa_stat.md",
+    "ЕГЭ/Дни/2026_02_20.md",
     "ЕГЭ/subjects/infa/i_zad7.md",
+    "ЕГЭ/subjects/mat/m_zad3.md",
+    "ЕГЭ/календарь.md.md",
     "ЕГЭ/изображения/Pasted image 20260220162416.png",
     "Для мэксуса/День 1.md",
-    "Свои заметки/Для мэксуса/Screenshot_20260220-004527.png",
     "Свои заметки/Для мэксуса",
     "Свои заметки",
     "Для мэксуса",
@@ -223,10 +243,7 @@
     "ЕГЭ/sluj/cash/BASED3.md",
     "ЕГЭ/sluj/cash/BASED.md",
     "ЕГЭ/subjects/russ/r_zad11.md",
-    "ЕГЭ/subjects/russ/russ_stat.md",
     "ЕГЭ/subjects/russ/r_zad21.md",
-    "ЕГЭ/subjects/infa/infa_stat.md",
-    "ЕГЭ/subjects/mat/mat_stat.md",
     "ЕГЭ/Дни/2026_01_20.md",
     "ЕГЭ/sluj/cash/BASED1.md",
     "ЕГЭ/subjects/russ/r_zad9.md",
@@ -236,8 +253,6 @@
     "ЕГЭ/изображения/Pasted image 20260218003025.png",
     "ЕГЭ/sluj/cash/BASED0.md",
     "ЕГЭ/Дни/2026_02_16.md",
-    "ЕГЭ/sluj/cash/BASED2.md",
-    "ЕГЭ/subjects/infa/i_zad1.md",
     "ЕГЭ/изображения/Pasted image 20260216233034.png",
     "ЕГЭ/изображения/Pasted image 20260217000421.png",
     "ЕГЭ/изображения/Pasted image 20260217001030.png",
