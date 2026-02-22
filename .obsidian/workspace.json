@@ -27,12 +27,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "ЕГЭ/subjects/mat/m_zad2.md",
+                "file": "ЕГЭ/subjects/russ/russ_stat.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "m_zad2"
+              "title": "russ_stat"
             }
           }
         ],
@@ -219,19 +219,22 @@
       "templater-obsidian:Templater": false
     }
   },
-  "active": "dedfcf7125f65095",
+  "active": "40a73492f53fefc0",
   "lastOpenFiles": [
+    "ЕГЭ/subjects/mat/mat_stat.md",
+    "ЕГЭ/subjects/infa/infa_stat.md",
+    "ЕГЭ/subjects/russ/russ_stat.md",
+    "ЕГЭ/subjects/russ/r_zad9.md",
+    "ЕГЭ/Дни/2026_02_22.md",
+    "Новый день.md",
+    "ЕГЭ/subjects/mat/m_zad2.md",
     "ЕГЭ/изображения/Pasted image 20260222143800.png",
     "ЕГЭ/Дни/2026_02_21.md",
     "ЕГЭ/Дни/2026_02_20.md",
     "ЕГЭ/Дни/2026_01_20.md",
     "Свои заметки/Для мэксуса/День 2.md",
-    "ЕГЭ/subjects/infa/infa_stat.md",
-    "ЕГЭ/subjects/mat/mat_stat.md",
     "ЕГЭ/subjects/russ/r_zad11.md",
     "ЕГЭ/subjects/russ/r_zad10.md",
-    "ЕГЭ/subjects/russ/russ_stat.md",
-    "Новый день.md",
     "Свои заметки/Для мэксуса/День 1.md",
     "Свои заметки/Для мэксуса/Screenshot_20260220-004527.png",
     "ЕГЭ/subjects/infa/i_zad7.md",
@@ -248,8 +251,6 @@
     "ЕГЭ/sluj/cash/BASED.md",
     "ЕГЭ/subjects/russ/r_zad21.md",
     "ЕГЭ/sluj/cash/BASED1.md",
-    "ЕГЭ/subjects/russ/r_zad9.md",
-    "ЕГЭ/subjects/mat/m_zad2.md",
     "ЕГЭ/Дни/2026_02_18.md",
     "ЕГЭ/Дни/2026_02_17.md",
     "ЕГЭ/изображения/Pasted image 20260218003025.png",
