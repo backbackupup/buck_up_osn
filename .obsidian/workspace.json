@@ -11,14 +11,10 @@
             "id": "153078c287cabe8d",
             "type": "leaf",
             "state": {
-              "type": "markdown",
-              "state": {
-                "file": "ЕГЭ/календарь.md.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "календарь.md"
+              "type": "graph",
+              "state": {},
+              "icon": "lucide-git-fork",
+              "title": "Граф"
             }
           },
           {
@@ -39,18 +35,17 @@
             "id": "f9944a2d4f70bf7e",
             "type": "leaf",
             "state": {
-              "type": "split-diff-view",
+              "type": "markdown",
               "state": {
-                "aFile": "ЕГЭ/subjects/infa/infa_stat.md",
-                "bFile": "ЕГЭ/subjects/infa/infa_stat.md",
-                "aRef": ""
+                "file": "ЕГЭ/subjects/mat/mat_stat.md",
+                "mode": "source",
+                "source": false
               },
-              "icon": "diff",
-              "title": "Diff: infa_stat  (Working Tree)"
+              "icon": "lucide-file",
+              "title": "mat_stat"
             }
           }
-        ],
-        "currentTab": 2
+        ]
       }
     ],
     "direction": "vertical"
@@ -107,7 +102,8 @@
       }
     ],
     "direction": "horizontal",
-    "width": 200
+    "width": 200,
+    "collapsed": true
   },
   "right": {
     "id": "b64103921e583cfa",
@@ -218,7 +214,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 300
+    "width": 230.5
   },
   "left-ribbon": {
     "hiddenItems": {
@@ -233,15 +229,15 @@
       "templater-obsidian:Templater": false
     }
   },
-  "active": "f9944a2d4f70bf7e",
+  "active": "153078c287cabe8d",
   "lastOpenFiles": [
+    "ЕГЭ/календарь.md.md",
+    "ЕГЭ/subjects/mat/mat_stat.md",
     "ЕГЭ/subjects/mat/m_zad4.md",
     "ЕГЭ/subjects/mat/m_zad5.md",
     "ЕГЭ/subjects/mat/m_zad3.md",
     "ЕГЭ/subjects/russ/russ_stat.md",
     "ЕГЭ/subjects/infa/infa_stat.md",
-    "ЕГЭ/subjects/mat/mat_stat.md",
-    "ЕГЭ/календарь.md.md",
     "ЕГЭ/Дни/2026_01_30.md",
     "ЕГЭ/Дни/2026_01_20.md",
     "ЕГЭ/Дни/2026_01_21.md",
