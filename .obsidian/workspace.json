@@ -11,10 +11,14 @@
             "id": "153078c287cabe8d",
             "type": "leaf",
             "state": {
-              "type": "graph",
-              "state": {},
-              "icon": "lucide-git-fork",
-              "title": "Граф"
+              "type": "markdown",
+              "state": {
+                "file": "Свои заметки/Для мэксуса/День 5.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "День 5"
             }
           },
           {
@@ -102,8 +106,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 200,
-    "collapsed": true
+    "width": 200
   },
   "right": {
     "id": "b64103921e583cfa",
@@ -231,13 +234,16 @@
   },
   "active": "153078c287cabe8d",
   "lastOpenFiles": [
+    "ЕГЭ/subjects/russ/r_zad11.md",
+    "Свои заметки/Для мэксуса/День 5.md",
+    "Свои заметки/Для мэксуса/Screenshot_20260224-073648.png",
+    "ЕГЭ/subjects/infa/infa_stat.md",
     "ЕГЭ/календарь.md.md",
     "ЕГЭ/subjects/mat/mat_stat.md",
+    "ЕГЭ/subjects/russ/russ_stat.md",
     "ЕГЭ/subjects/mat/m_zad4.md",
     "ЕГЭ/subjects/mat/m_zad5.md",
     "ЕГЭ/subjects/mat/m_zad3.md",
-    "ЕГЭ/subjects/russ/russ_stat.md",
-    "ЕГЭ/subjects/infa/infa_stat.md",
     "ЕГЭ/Дни/2026_01_30.md",
     "ЕГЭ/Дни/2026_01_20.md",
     "ЕГЭ/Дни/2026_01_21.md",
@@ -255,8 +261,6 @@
     "ЕГЭ/Дни/2026_02_03.md",
     "ЕГЭ/Дни/2026_02_04.md",
     "ЕГЭ/Дни/2026_02_05.md",
-    "ЕГЭ/Дни/2026_02_23.md",
-    "ЕГЭ/Дни/2026_02_18.md",
     "Свои заметки/Для мэксуса/Pasted image 20260223211444.png",
     "Свои заметки/Для мэксуса/Pasted image 20260223202020.png",
     "Свои заметки/Для мэксуса/Pasted image 20260223201837.png",
@@ -270,7 +274,6 @@
     "Для мэксуса",
     "ЕГЭ/изображения/Pasted image 20260218003025.png",
     "ЕГЭ/изображения/Pasted image 20260216233034.png",
-    "ЕГЭ/изображения/Pasted image 20260217000421.png",
     "ЕГЭ/изображения",
     "skript/provmat_segod.js",
     "Без названия",
