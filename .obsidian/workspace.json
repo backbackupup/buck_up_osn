@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "ЕГЭ/календарь.md.md",
+                "file": "Свои заметки/Буфер/Базис буфер.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "календарь.md"
+              "title": "Базис буфер"
             }
           }
         ]
@@ -207,6 +207,7 @@
   },
   "active": "153078c287cabe8d",
   "lastOpenFiles": [
+    "ЕГЭ/календарь.md.md",
     "Свои заметки/Для мэксуса/День 5.md",
     "Свои заметки/Проекты/МВУ/include TFT screen.md",
     "Свои заметки/Проекты/МВУ/шрифт я.md",
