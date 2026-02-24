@@ -1,0 +1,302 @@
+{
+  "main": {
+    "id": "ef7b200bb891c0da",
+    "type": "split",
+    "children": [
+      {
+        "id": "8a2e1e2872e8b771",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "153078c287cabe8d",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Свои заметки/Проекты/МВУ/include TFT screen.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "include TFT screen"
+            }
+          },
+          {
+            "id": "27d96d642d429a0e",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Свои заметки/Буфер/Базис буфер.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "Базис буфер"
+            }
+          },
+          {
+            "id": "40a73492f53fefc0",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "ЕГЭ/subjects/mat/m_zad5.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "m_zad5"
+            }
+          },
+          {
+            "id": "f9944a2d4f70bf7e",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "ЕГЭ/subjects/mat/mat_stat.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "mat_stat"
+            }
+          }
+        ],
+        "currentTab": 1
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "d88273a5c403194e",
+    "type": "split",
+    "children": [
+      {
+        "id": "a9150e852987247d",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "dedfcf7125f65095",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical",
+                "autoReveal": false
+              },
+              "icon": "lucide-folder-closed",
+              "title": "Файловый менеджер"
+            }
+          },
+          {
+            "id": "ea4acb87bb275a09",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "fla",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              },
+              "icon": "lucide-search",
+              "title": "Поиск"
+            }
+          },
+          {
+            "id": "d1a9f92fd85f14ba",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {},
+              "icon": "lucide-bookmark",
+              "title": "Закладки"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 200
+  },
+  "right": {
+    "id": "b64103921e583cfa",
+    "type": "split",
+    "children": [
+      {
+        "id": "d468436fefbf56a1",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "ff543b6d94b3df3d",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-coming-in",
+              "title": "Обратные ссылки"
+            }
+          },
+          {
+            "id": "1bfa652fc261b266",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-going-out",
+              "title": "Исходящие ссылки"
+            }
+          },
+          {
+            "id": "31b159460c1e7905",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-tags",
+              "title": "Теги"
+            }
+          },
+          {
+            "id": "1ef15df77a0327d0",
+            "type": "leaf",
+            "state": {
+              "type": "all-properties",
+              "state": {
+                "sortOrder": "frequency",
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-archive",
+              "title": "Все свойства"
+            }
+          },
+          {
+            "id": "2add2c5fc0d55e54",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "followCursor": false,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-list",
+              "title": "Структура"
+            }
+          },
+          {
+            "id": "49c5f21ad4ac922b",
+            "type": "leaf",
+            "state": {
+              "type": "file-properties",
+              "state": {
+                "file": "test.md"
+              },
+              "icon": "lucide-info",
+              "title": "Свойства файла для test"
+            }
+          },
+          {
+            "id": "ec147e05c6a1f612",
+            "type": "leaf",
+            "state": {
+              "type": "git-view",
+              "state": {},
+              "icon": "git-pull-request",
+              "title": "Source Control"
+            }
+          }
+        ],
+        "currentTab": 6
+      }
+    ],
+    "direction": "horizontal",
+    "width": 230.5
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "switcher:Меню быстрого перехода": false,
+      "graph:Граф": false,
+      "canvas:Создать новый холст": false,
+      "daily-notes:Сегодняшняя заметка": false,
+      "templates:Вставить шаблон": false,
+      "command-palette:Открыть палитру команд": false,
+      "bases:Создать новую базу": false,
+      "obsidian-git:Open Git source control": false,
+      "templater-obsidian:Templater": false,
+      "obsidian-excalidraw-plugin:Создать новый чертеж": false
+    }
+  },
+  "active": "27d96d642d429a0e",
+  "lastOpenFiles": [
+    "ЕГЭ/subjects/russ/russ_stat.md",
+    "ЕГЭ/subjects/infa/infa_stat.md",
+    "ЕГЭ/subjects/mat/mat_stat.md",
+    "Свои заметки/Буфер/Базис буфер.md",
+    "Свои заметки/Проекты/МВУ/include TFT screen.md",
+    "Свои заметки/Проекты/МВУ/шрифт я.md",
+    "Свои заметки/Проекты/МВУ/шрифт н.md",
+    "Новый день.md",
+    "Excalidraw",
+    "Свои заметки/Проекты/МВУ",
+    "Свои заметки/Проекты",
+    "ЕГЭ/subjects/mat/m_zad5.md",
+    "ЕГЭ/subjects/mat/m_zad4.md",
+    "ЕГЭ/subjects/russ/r_zad9.md",
+    "ЕГЭ/subjects/russ/r_zad8.md",
+    "ЕГЭ/subjects/russ/r_zad10.md",
+    "ЕГЭ/subjects/russ/r_zad11.md",
+    "ЕГЭ/Дни/2026_02_24.md",
+    "ЕГЭ/sluj/cash/BASED5.md",
+    "Свои заметки/Для мэксуса/День 5.md",
+    "Свои заметки/Для мэксуса/Screenshot_20260224-073648.png",
+    "ЕГЭ/календарь.md.md",
+    "ЕГЭ/subjects/mat/m_zad3.md",
+    "ЕГЭ/Дни/2026_01_30.md",
+    "ЕГЭ/Дни/2026_01_20.md",
+    "ЕГЭ/Дни/2026_01_21.md",
+    "ЕГЭ/Дни/2026_01_22.md",
+    "ЕГЭ/Дни/2026_01_23.md",
+    "ЕГЭ/Дни/2026_01_24.md",
+    "ЕГЭ/Дни/2026_01_25.md",
+    "Свои заметки/Для мэксуса/Pasted image 20260223211444.png",
+    "Свои заметки/Для мэксуса/Pasted image 20260223202020.png",
+    "Свои заметки/Для мэксуса/Pasted image 20260223201837.png",
+    "ЕГЭ/изображения/Pasted image 20260223200911.png",
+    "Свои заметки/Буфер",
+    "ЕГЭ/изображения/Pasted image 20260222143800.png",
+    "Свои заметки/Для мэксуса/Screenshot_20260220-004527.png",
+    "ЕГЭ/изображения/Pasted image 20260220162416.png",
+    "Свои заметки/Для мэксуса",
+    "Свои заметки",
+    "Для мэксуса",
+    "ЕГЭ/изображения/Pasted image 20260218003025.png",
+    "ЕГЭ/изображения/Pasted image 20260216233034.png",
+    "ЕГЭ/изображения",
+    "skript/provmat_segod.js",
+    "Без названия",
+    "Без названия 1.canvas",
+    "Без названия.canvas"
+  ]
+}
