@@ -11,28 +11,10 @@
             "id": "153078c287cabe8d",
             "type": "leaf",
             "state": {
-              "type": "markdown",
-              "state": {
-                "file": "Свои заметки/Проекты/МВУ/include TFT screen.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "include TFT screen"
-            }
-          },
-          {
-            "id": "27d96d642d429a0e",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "Свои заметки/Буфер/Базис буфер.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "Базис буфер"
+              "type": "graph",
+              "state": {},
+              "icon": "lucide-git-fork",
+              "title": "Граф"
             }
           },
           {
@@ -63,8 +45,7 @@
               "title": "mat_stat"
             }
           }
-        ],
-        "currentTab": 1
+        ]
       }
     ],
     "direction": "vertical"
@@ -121,7 +102,8 @@
       }
     ],
     "direction": "horizontal",
-    "width": 200
+    "width": 200,
+    "collapsed": true
   },
   "right": {
     "id": "b64103921e583cfa",
@@ -244,35 +226,18 @@
       "command-palette:Открыть палитру команд": false,
       "bases:Создать новую базу": false,
       "obsidian-git:Open Git source control": false,
-      "templater-obsidian:Templater": false,
-      "obsidian-excalidraw-plugin:Создать новый чертеж": false
+      "templater-obsidian:Templater": false
     }
   },
-  "active": "27d96d642d429a0e",
+  "active": "153078c287cabe8d",
   "lastOpenFiles": [
+    "ЕГЭ/календарь.md.md",
+    "ЕГЭ/subjects/mat/mat_stat.md",
+    "ЕГЭ/subjects/mat/m_zad4.md",
+    "ЕГЭ/subjects/mat/m_zad5.md",
+    "ЕГЭ/subjects/mat/m_zad3.md",
     "ЕГЭ/subjects/russ/russ_stat.md",
     "ЕГЭ/subjects/infa/infa_stat.md",
-    "ЕГЭ/subjects/mat/mat_stat.md",
-    "Свои заметки/Буфер/Базис буфер.md",
-    "Свои заметки/Проекты/МВУ/include TFT screen.md",
-    "Свои заметки/Проекты/МВУ/шрифт я.md",
-    "Свои заметки/Проекты/МВУ/шрифт н.md",
-    "Новый день.md",
-    "Excalidraw",
-    "Свои заметки/Проекты/МВУ",
-    "Свои заметки/Проекты",
-    "ЕГЭ/subjects/mat/m_zad5.md",
-    "ЕГЭ/subjects/mat/m_zad4.md",
-    "ЕГЭ/subjects/russ/r_zad9.md",
-    "ЕГЭ/subjects/russ/r_zad8.md",
-    "ЕГЭ/subjects/russ/r_zad10.md",
-    "ЕГЭ/subjects/russ/r_zad11.md",
-    "ЕГЭ/Дни/2026_02_24.md",
-    "ЕГЭ/sluj/cash/BASED5.md",
-    "Свои заметки/Для мэксуса/День 5.md",
-    "Свои заметки/Для мэксуса/Screenshot_20260224-073648.png",
-    "ЕГЭ/календарь.md.md",
-    "ЕГЭ/subjects/mat/m_zad3.md",
     "ЕГЭ/Дни/2026_01_30.md",
     "ЕГЭ/Дни/2026_01_20.md",
     "ЕГЭ/Дни/2026_01_21.md",
@@ -280,6 +245,18 @@
     "ЕГЭ/Дни/2026_01_23.md",
     "ЕГЭ/Дни/2026_01_24.md",
     "ЕГЭ/Дни/2026_01_25.md",
+    "ЕГЭ/Дни/2026_01_26.md",
+    "ЕГЭ/Дни/2026_01_27.md",
+    "ЕГЭ/Дни/2026_01_28.md",
+    "ЕГЭ/Дни/2026_01_29.md",
+    "ЕГЭ/Дни/2026_01_31.md",
+    "ЕГЭ/Дни/2026_02_01.md",
+    "ЕГЭ/Дни/2026_02_02.md",
+    "ЕГЭ/Дни/2026_02_03.md",
+    "ЕГЭ/Дни/2026_02_04.md",
+    "ЕГЭ/Дни/2026_02_05.md",
+    "ЕГЭ/Дни/2026_02_23.md",
+    "ЕГЭ/Дни/2026_02_18.md",
     "Свои заметки/Для мэксуса/Pasted image 20260223211444.png",
     "Свои заметки/Для мэксуса/Pasted image 20260223202020.png",
     "Свои заметки/Для мэксуса/Pasted image 20260223201837.png",
@@ -293,9 +270,13 @@
     "Для мэксуса",
     "ЕГЭ/изображения/Pasted image 20260218003025.png",
     "ЕГЭ/изображения/Pasted image 20260216233034.png",
+    "ЕГЭ/изображения/Pasted image 20260217000421.png",
     "ЕГЭ/изображения",
     "skript/provmat_segod.js",
     "Без названия",
+    "skript/plan.js",
+    "skript/Новый текстовый документ.txt",
+    "ЕГЭ/subjects/mat 1",
     "Без названия 1.canvas",
     "Без названия.canvas"
   ]

@@ -2,6 +2,5 @@
   "templater-obsidian",
   "dataview",
   "obsidian-charts",
-  "obsidian-git",
-  "obsidian-excalidraw-plugin"
+  "obsidian-git"
 ]
