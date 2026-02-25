@@ -11,10 +11,14 @@
             "id": "4479b00f0e981f3a",
             "type": "leaf",
             "state": {
-              "type": "graph",
-              "state": {},
-              "icon": "lucide-git-fork",
-              "title": "Граф"
+              "type": "markdown",
+              "state": {
+                "file": "ЕГЭ/subjects/infa/i_zad5.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "i_zad5"
             }
           },
           {
@@ -23,12 +27,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "ЕГЭ/subjects/mat/mat_stat.md",
+                "file": "ЕГЭ/subjects/russ/russ_stat.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "mat_stat"
+              "title": "russ_stat"
             }
           },
           {
@@ -37,16 +41,16 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "ЕГЭ/Дни/2026_02_15.md",
+                "file": "temples/test.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "2026_02_15"
+              "title": "test"
             }
           }
         ],
-        "currentTab": 1
+        "currentTab": 2
       }
     ],
     "direction": "vertical"
@@ -200,55 +204,57 @@
       "command-palette:Открыть палитру команд": false,
       "bases:Создать новую базу": false,
       "templater-obsidian:Templater": false,
-      "obsidian-git:Open Git source control": false
+      "obsidian-git:Open Git source control": false,
+      "obsidian-excalidraw-plugin:Создать новый чертеж": false
     }
   },
-  "active": "7f9eaa996b64be5c",
+  "active": "966be5156e6c7a1b",
   "lastOpenFiles": [
-    "Свои заметки/Для мэксуса/День 5.md",
-    "Свои заметки/Для мэксуса/Screenshot_20260224-073648.png",
+    "ЕГЭ/Дни/2026_02_15.md",
+    "ЕГЭ/subjects/russ/russ_stat.md",
     "ЕГЭ/subjects/mat/mat_stat.md",
     "ЕГЭ/subjects/infa/infa_stat.md",
-    "Свои заметки/Для мэксуса/День 4.md",
-    "/ЕГЭ/subjects/infa/infa_stat.md",
+    "ЕГЭ/subjects/infa/i_zad3.md",
+    "ЕГЭ/subjects/infa/i_zad2.md",
+    "ЕГЭ/subjects/infa/i_zad1.md",
+    "/ЕГЭ/subjects/infa/i_zad1.md",
+    "ЕГЭ/subjects/infa/i_zad7.md",
+    "ЕГЭ/изображения/Pasted image 20260220162416.png",
+    "Новый день.md",
+    "ЕГЭ/subjects/infa/i_zad5.md",
+    "/Свои заметки/Проекты/МВУ/шрифт я.md",
+    "/Свои заметки/Проекты/МВУ",
+    "/Свои заметки/Проекты",
+    "/Свои заметки/Буфер/Базис буфер.md",
+    "/Свои заметки/Буфер",
+    "/Свои заметки",
+    "/ЕГЭ/subjects/mat/m_zad5.md",
+    "/ЕГЭ/subjects/mat",
+    "/ЕГЭ/subjects/infa/i_zad7.md",
+    "/ЕГЭ/subjects/infa/i_zad6.md",
+    "/ЕГЭ/subjects/infa/i_zad5.md",
+    "/ЕГЭ/subjects/infa/i_zad4.md",
+    "/ЕГЭ/subjects/infa/i_zad3.md",
+    "/ЕГЭ/subjects/infa/i_zad2.md",
     "/ЕГЭ/subjects/infa",
-    "/ЕГЭ/subjects/russ/russ_stat.md",
-    "/ЕГЭ/subjects/russ",
     "/ЕГЭ/subjects",
     "/ЕГЭ",
-    "Свои заметки/Буфер/Базис буфер.md",
-    "/Свои заметки/Для мэксуса/День 4.md",
-    "/ЕГЭ/календарь.md.md",
-    "/ЕГЭ/Дни/2026_02_23.md",
-    "ЕГЭ/Дни/2026_02_23.md",
-    "/ЕГЭ/Дни",
-    "/ЕГЭ/subjects/mat/mat_stat.md",
-    "/ЕГЭ/sluj/cash/BASED4.md",
-    "/ЕГЭ/sluj/cash",
-    "/ЕГЭ/sluj",
-    "Свои заметки/Для мэксуса/День 3.md",
+    "/temples/test.md",
+    "/temples",
+    "ЕГЭ/subjects/infa/i_zad6.md",
+    "ЕГЭ/subjects/infa/i_zad4.md",
+    "ЕГЭ/изображения/Pasted image 20260217000421.png",
+    "ЕГЭ/изображения/Pasted image 20260217001030.png",
+    "Свои заметки/Для мэксуса/День 6.md",
+    "Свои заметки/Проекты/МВУ/include TFT screen.md",
+    "Свои заметки/Проекты/МВУ/шрифт н.md",
+    "Свои заметки/Для мэксуса/Screenshot_20260224-073648.png",
+    "/ЕГЭ/subjects/russ",
     "Свои заметки/Для мэксуса/Pasted image 20260223211444.png",
     "Свои заметки/Для мэксуса/Pasted image 20260223202020.png",
-    "/Свои заметки/Для мэксуса/День 3.md",
     "/Свои заметки/Для мэксуса/Pasted image 20260223211444.png",
     "/Свои заметки/Для мэксуса/Pasted image 20260223202020.png",
     "/Свои заметки/Для мэксуса/Pasted image 20260223201837.png",
-    "Свои заметки/Для мэксуса/Pasted image 20260223201837.png",
-    "/Свои заметки/Для мэксуса",
-    "/Свои заметки",
-    "/ЕГЭ/изображения/Pasted image 20260223200911.png",
-    "ЕГЭ/изображения/Pasted image 20260223200911.png",
-    "/ЕГЭ/изображения",
-    "/ЕГЭ/subjects/russ/r_zad11.md",
-    "/ЕГЭ/subjects/mat/m_zad6.md",
-    "/ЕГЭ/subjects/mat/m_zad5.md",
-    "/ЕГЭ/subjects/mat/m_zad4.md",
-    "/ЕГЭ/subjects/infa/i_zad5.md",
-    "/ЕГЭ/subjects/infa/i_zad4.md",
-    "ЕГЭ/календарь.md.md",
-    "/ЕГЭ/изображения/Pasted image 20260222143800.png",
-    "/ЕГЭ/Дни/2026_02_22.md",
-    "ЕГЭ/Дни/2026_02_22.md",
-    "/ЕГЭ/subjects/russ/r_zad9.md"
+    "Свои заметки/Для мэксуса/Pasted image 20260223201837.png"
   ]
 }
