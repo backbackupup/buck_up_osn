@@ -53,14 +53,14 @@
             "id": "f9944a2d4f70bf7e",
             "type": "leaf",
             "state": {
-              "type": "markdown",
+              "type": "split-diff-view",
               "state": {
-                "file": "Свои заметки/Для мэксуса/День 6.md",
-                "mode": "source",
-                "source": false
+                "aFile": ".obsidian/workspace.json",
+                "bFile": ".obsidian/workspace.json",
+                "aRef": ""
               },
-              "icon": "lucide-file",
-              "title": "День 6"
+              "icon": "diff",
+              "title": "Diff: workspace.json  (Working Tree)"
             }
           }
         ],
@@ -96,7 +96,7 @@
             "state": {
               "type": "search",
               "state": {
-                "query": "fla",
+                "query": "",
                 "matchingCase": false,
                 "explainSearch": false,
                 "collapseAll": false,
@@ -250,8 +250,8 @@
   },
   "active": "f9944a2d4f70bf7e",
   "lastOpenFiles": [
-    "ЕГЭ/subjects/mat/mat_stat.md",
     "Свои заметки/Для мэксуса/День 6.md",
+    "ЕГЭ/subjects/mat/mat_stat.md",
     "ЕГЭ/subjects/mat/m_zad3.md",
     "ЕГЭ/subjects/mat/m_zad2.md",
     "ЕГЭ/Дни/2026_02_21.md",
