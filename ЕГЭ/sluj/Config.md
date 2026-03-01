@@ -3,7 +3,7 @@ shab_edin: 1.5
 shab_mnoj: 0.75
 name_base: BASED5
 data_do: 2026_03_02
-shet_mess: 64
+shet_mess: 128
 mat_zad_plan:
   - m_zad3
   - m_zad4
