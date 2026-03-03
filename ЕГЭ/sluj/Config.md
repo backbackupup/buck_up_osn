@@ -2,17 +2,17 @@
 shab_edin: 1.5
 shab_mnoj: 0.75
 name_base: BASED6
-data_do: 2026_03_02
+data_do: 2026_03_27
 shet_mess: 128
 mat_zad_plan:
-  - m_zad3
-  - m_zad4
-  - m_zad5
+  - m_zad7
+  - m_zad8
+  - m_zad9
 russ_zad_plan:
-  - r_zad11
-  - r_zad12
+  - r_zad13
 infa_zad_plan:
-  - i_zad3
-  - i_zad6
-  - i_zad7
+  - i_zad8
+  - i_zad9
+  - i_zad10
+  - i_zad11
 ---
