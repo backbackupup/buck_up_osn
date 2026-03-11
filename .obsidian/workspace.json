@@ -41,12 +41,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "ЕГЭ/Дни/2026_03_10.md",
+                "file": "ЕГЭ/subjects/russ/russ_stat.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "2026_03_10"
+              "title": "russ_stat"
             }
           },
           {
@@ -250,10 +250,13 @@
   },
   "active": "40a73492f53fefc0",
   "lastOpenFiles": [
-    "Новый день.md",
-    "ЕГЭ/sluj/cash/BASED7.md",
     "ЕГЭ/календарь.md.md",
+    "ЕГЭ/subjects/mat/mat_stat.md",
+    "ЕГЭ/sluj/Config.md",
+    "ЕГЭ/Дни/2026_03_11.md",
+    "Новый день.md",
     "ЕГЭ/Дни/2026_03_10.md",
+    "ЕГЭ/sluj/cash/BASED7.md",
     "ЕГЭ/Дни/2026_03_09.md",
     "ЕГЭ/Дни/2026_03_08.md",
     "ЕГЭ/Дни/2026_03_07.md",
@@ -261,8 +264,6 @@
     "ЕГЭ/sluj/cash/BASED3.md",
     "ЕГЭ/sluj/cash/BASED1.md",
     "ЕГЭ/subjects/infa/infa_stat.md",
-    "ЕГЭ/subjects/mat/mat_stat.md",
-    "ЕГЭ/sluj/Config.md",
     "ЕГЭ/Дни/2026_03_06.md",
     "ЕГЭ/Дни/2026_03_05.md",
     "ЕГЭ/изображения/Pasted image 20260305205106.png",
@@ -276,7 +277,6 @@
     "ЕГЭ/sluj/cash/BASED6.md",
     "Свои заметки/Проекты/МВУ/шрифт н.md",
     "Свои заметки/Проекты/МВУ/шрифт я.md",
-    "ЕГЭ/subjects/russ/r_zad11.md",
     "Excalidraw",
     "Свои заметки/Проекты/МВУ",
     "Свои заметки/Проекты",
