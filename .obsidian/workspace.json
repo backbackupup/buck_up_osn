@@ -81,18 +81,38 @@
             "id": "2765566df249b65f",
             "type": "leaf",
             "state": {
-              "type": "markdown",
+              "type": "canvas",
               "state": {
-                "file": "conflict-files-obsidian-git.md",
-                "mode": "source",
-                "source": false
+                "file": "Свои заметки/Проекты/МВУ/Иерархия библиотек.canvas",
+                "viewState": {
+                  "x": 876.7936042374819,
+                  "y": -402.90050523922844,
+                  "zoom": -0.70711892789056
+                }
               },
-              "icon": "lucide-file",
-              "title": "conflict-files-obsidian-git"
+              "icon": "lucide-layout-dashboard",
+              "title": "Иерархия библиотек"
+            }
+          },
+          {
+            "id": "9e4fd58434de6503",
+            "type": "leaf",
+            "state": {
+              "type": "canvas",
+              "state": {
+                "file": "Свои заметки/Проекты/МВУ/Иерархия библиотек.canvas",
+                "viewState": {
+                  "x": 839.1942276942559,
+                  "y": -467.55975605697824,
+                  "zoom": -0.5740267579264035
+                }
+              },
+              "icon": "lucide-layout-dashboard",
+              "title": "Иерархия библиотек"
             }
           }
         ],
-        "currentTab": 5
+        "currentTab": 6
       }
     ],
     "direction": "vertical"
@@ -276,8 +296,17 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "2765566df249b65f",
+  "active": "9e4fd58434de6503",
   "lastOpenFiles": [
+    "Drawing 2026-03-18 20.31.47.excalidraw.md",
+    "Свои заметки/Проекты/МВУ/Экран/Низкоуровневые функции/Drawing 2026-03-13 08.47.07.excalidraw.md",
+    "Свои заметки/Проекты/МВУ/Иерархия библиотек.canvas",
+    "Новый день.md",
+    "Свои заметки/Проекты/МВУ/Экран/Низкоуровневые функции/шрифт я.md",
+    "Свои заметки/Проекты/МВУ/Экран/Низкоуровневые функции/шрифт н.md",
+    "ЕГЭ/календарь.md.md",
+    "Свои заметки/Проекты/МВУ/Без названия.md",
+    "библиотека",
     "conflict-files-obsidian-git.md",
     "ЕГЭ/Дни/2026_03_18.md",
     "ЕГЭ/Дни/2026_03_17.md",
@@ -285,7 +314,6 @@
     "ЕГЭ/Дни/2026_03_15.md",
     "ЕГЭ/Дни/2026_03_14.md",
     "ЕГЭ/sluj/cash/BASED8.md",
-    "ЕГЭ/календарь.md.md",
     "ЕГЭ/sluj/Config.md",
     "ЕГЭ/subjects/mat/mat_stat.md",
     "Свои заметки/Фильмы.md",
@@ -297,13 +325,6 @@
     "ЕГЭ/Дни/2026_03_10.md",
     "ЕГЭ/sluj/cash/BASED7.md",
     "ЕГЭ/subjects/russ/russ_stat.md",
-    "ЕГЭ/subjects/infa/infa_stat.md",
-    "ЕГЭ/subjects/mat/m_zad7.md",
-    "ЕГЭ/Дни/2026_03_09.md",
-    "Новый день.md",
-    "ЕГЭ/Дни/2026_03_07.md",
-    "ЕГЭ/Дни/2026_03_08.md",
-    "ЕГЭ/Дни/2026_03_06.md",
     "ЕГЭ/изображения/Pasted image 20260305205106.png",
     "Excalidraw",
     "Свои заметки/Проекты/МВУ",
@@ -323,7 +344,6 @@
     "ЕГЭ/изображения/Pasted image 20260218003025.png",
     "ЕГЭ/изображения",
     "skript/provmat_segod.js",
-    "Без названия",
     "Без названия 1.canvas",
     "Без названия.canvas"
   ]
