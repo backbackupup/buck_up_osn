@@ -1,0 +1,40 @@
+{
+	"nodes":[
+		{"id":"f544d2b591f31bf5","type":"text","text":"Текстовый редактор","x":355,"y":-380,"width":250,"height":60},
+		{"id":"4837b21b871597b8","type":"text","text":"Графика ","x":605,"y":-100,"width":250,"height":60},
+		{"id":"1060c1d03d1ac44a","type":"text","text":"Вывод функции ","x":855,"y":80,"width":250,"height":60},
+		{"id":"ebc1500c35c30c16","type":"text","text":"Масштабирование ","x":355,"y":80,"width":250,"height":60},
+		{"id":"9593119d93232e0d","type":"text","text":"Запись регистров","x":-20,"y":240,"width":250,"height":60},
+		{"id":"33ab56501c0446e7","type":"text","text":"TFT_MVU","x":105,"y":-70,"width":250,"height":60},
+		{"id":"130e74027c3224ab","type":"text","text":"Буквы ","x":-100,"y":-280,"width":250,"height":60},
+		{"id":"1d4f46bdbf1162fc","x":940,"y":-380,"width":250,"height":60,"type":"text","text":"Файловая система "},
+		{"id":"351a9c25e11be39d","x":1190,"y":-180,"width":250,"height":60,"type":"text","text":"Flash_memori_mvu"},
+		{"id":"21f7d4bfe7d35d9f","type":"text","text":"Рендер + Отображение ","x":605,"y":-520,"width":250,"height":60},
+		{"id":"13c5b1a5b566b8ed","x":1363,"y":-580,"width":250,"height":60,"type":"text","text":"Input_system"},
+		{"id":"b4d2f6725e10ce34","x":940,"y":-580,"width":250,"height":60,"type":"text","text":"Приложение 1"},
+		{"id":"6b5cdc25d44a656b","x":1238,"y":-700,"width":250,"height":60,"type":"text","text":"Main Menu "},
+		{"id":"b9b38bf583dbf488","x":1488,"y":-420,"width":250,"height":60,"type":"text","text":"Протоколы передачи данных "},
+		{"id":"02f8b9ab367787b4","x":1738,"y":-520,"width":250,"height":60,"type":"text","text":"Модульная система управления "}
+	],
+	"edges":[
+		{"id":"434c8758c5715f12","fromNode":"33ab56501c0446e7","fromSide":"top","toNode":"f544d2b591f31bf5","toSide":"bottom"},
+		{"id":"18ed01c9b171ebe1","fromNode":"1060c1d03d1ac44a","fromSide":"top","toNode":"4837b21b871597b8","toSide":"bottom"},
+		{"id":"8e9559291f3aa894","fromNode":"ebc1500c35c30c16","fromSide":"top","toNode":"4837b21b871597b8","toSide":"bottom"},
+		{"id":"8b94fd33960ecd39","fromNode":"f544d2b591f31bf5","fromSide":"top","toNode":"21f7d4bfe7d35d9f","toSide":"bottom"},
+		{"id":"fb6bf5621fad9410","fromNode":"4837b21b871597b8","fromSide":"top","toNode":"21f7d4bfe7d35d9f","toSide":"bottom"},
+		{"id":"431ce3eab131014b","fromNode":"9593119d93232e0d","fromSide":"top","toNode":"33ab56501c0446e7","toSide":"bottom"},
+		{"id":"19f4246a255edb5a","fromNode":"33ab56501c0446e7","fromSide":"right","toNode":"4837b21b871597b8","toSide":"left"},
+		{"id":"ab83a762116adba1","fromNode":"33ab56501c0446e7","fromSide":"top","toNode":"130e74027c3224ab","toSide":"bottom"},
+		{"id":"229858044be4db4c","fromNode":"130e74027c3224ab","fromSide":"top","toNode":"f544d2b591f31bf5","toSide":"left"},
+		{"id":"97075dacf077547c","fromNode":"1d4f46bdbf1162fc","fromSide":"left","toNode":"21f7d4bfe7d35d9f","toSide":"right"},
+		{"id":"c6164c3b38b08b72","fromNode":"351a9c25e11be39d","fromSide":"left","toNode":"1d4f46bdbf1162fc","toSide":"bottom"},
+		{"id":"e106ab3bcdcb52c0","fromNode":"21f7d4bfe7d35d9f","fromSide":"top","toNode":"b4d2f6725e10ce34","toSide":"left"},
+		{"id":"987e972640bd560e","fromNode":"1d4f46bdbf1162fc","fromSide":"top","toNode":"b4d2f6725e10ce34","toSide":"bottom"},
+		{"id":"cae22b3a9e8935d1","fromNode":"13c5b1a5b566b8ed","fromSide":"left","toNode":"b4d2f6725e10ce34","toSide":"right"},
+		{"id":"4d76c2799bad251b","fromNode":"1d4f46bdbf1162fc","fromSide":"top","toNode":"6b5cdc25d44a656b","toSide":"bottom"},
+		{"id":"7734fe893521ae62","fromNode":"13c5b1a5b566b8ed","fromSide":"top","toNode":"6b5cdc25d44a656b","toSide":"right"},
+		{"id":"c518d1d496cafd63","fromNode":"21f7d4bfe7d35d9f","fromSide":"top","toNode":"6b5cdc25d44a656b","toSide":"left"},
+		{"id":"06c4a7954466433f","fromNode":"b9b38bf583dbf488","fromSide":"top","toNode":"13c5b1a5b566b8ed","toSide":"bottom"},
+		{"id":"1d446c25a5ea2878","fromNode":"02f8b9ab367787b4","fromSide":"left","toNode":"13c5b1a5b566b8ed","toSide":"right"}
+	]
+}
