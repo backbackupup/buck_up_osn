@@ -1,0 +1,1432 @@
+
+// ЗАГОЛОВОЧНЫЙ ФАЙЛ
+#ifndef TFT_LIB_H
+#define TFT_LIB_H
+
+#include <stdint.h>
+#include "freertos/FreeRTOS.h"
+#include "freertos/task.h"
+#include "freertos/semphr.h"
+#include "driver/spi_master.h"
+#include "esp_log.h"
+
+typedef struct {
+    uint16_t width;
+    uint16_t height;
+    uint8_t rotation;
+    spi_device_handle_t spi;
+    SemaphoreHandle_t mutex;
+    uint8_t pin_dc;
+    uint8_t pin_rst;
+    uint8_t pin_cs;
+    uint8_t pin_mosi;
+    uint8_t pin_miso;
+    uint8_t pin_clk;
+
+} tft_device_t;
+
+
+void tft_init(tft_device_t *dev);
+void tft_send_cmd(tft_device_t *dev, uint8_t cmd);
+void tft_send_cmd_with_data(tft_device_t *dev, uint8_t cmd, const uint8_t *data, int len);
+void tft_fill_pixel(tft_device_t *dev, int x, int y, uint8_t color1, uint8_t color2);
+void tft_fill_screen(tft_device_t *dev);
+void letter_print(tft_device_t *dev, char letter,  uint8_t y_start, uint8_t x_start, uint8_t y_finish, uint8_t x_finish,  uint16_t color);
+static void draw_line( uint8_t x_start, uint8_t y_start, uint8_t x_finish, uint8_t y_finish, uint8_t delta_x , uint16_t color1 , uint16_t color2, uint8_t *buf);
+
+#endif
+
+
+
+// ИСПОЛНИТЕЛЬНЫЙ ФАЙЛ
+
+#include "mvu_tft.h" 
+#include "driver/gpio.h"
+#include <math.h>
+#include <stdlib.h>
+static const char *TAG = "TFT_LIB";
+
+
+void tft_init(tft_device_t *dev)
+{
+    dev->mutex = xSemaphoreCreateMutex();
+    if (!dev->mutex) {
+        ESP_LOGE(TAG, "Failed to create mutex");
+        return;
+    }
+
+    gpio_config_t io_conf = {
+        .pin_bit_mask = (1ULL << dev->pin_dc) | (1ULL << dev->pin_rst) | (1ULL << dev->pin_cs),
+        .mode = GPIO_MODE_OUTPUT,
+        .pull_up_en = GPIO_PULLUP_DISABLE,
+        .pull_down_en = GPIO_PULLDOWN_DISABLE,
+        .intr_type = GPIO_INTR_DISABLE
+    };
+    gpio_config(&io_conf);
+    
+    
+    gpio_set_level(dev->pin_cs, 1);
+
+    // аппаратный сброс
+    gpio_set_level(dev->pin_rst, 0);
+    vTaskDelay(pdMS_TO_TICKS(50));
+    gpio_set_level(dev->pin_rst, 1);
+    vTaskDelay(pdMS_TO_TICKS(50));
+
+
+
+    spi_bus_config_t buscfg = {
+        .miso_io_num = -1,
+        .mosi_io_num = dev->pin_mosi,
+        .sclk_io_num = dev->pin_clk,
+        .quadwp_io_num = -1,
+        .quadhd_io_num = -1,
+        .max_transfer_sz = 4096
+    };
+    esp_err_t ret = spi_bus_initialize(SPI2_HOST, &buscfg, SPI_DMA_CH_AUTO);
+    if (ret != ESP_OK) {
+        ESP_LOGE(TAG, "spi_bus_initialize failed: %d", ret);
+        return;
+    }
+
+        spi_device_interface_config_t devcfg = {
+        .clock_speed_hz = 26 * 1000 * 1000,
+        .mode = 0,
+        .spics_io_num = dev->pin_cs,
+        .queue_size = 7,
+        .flags = SPI_DEVICE_HALFDUPLEX
+    };
+
+    ret = spi_bus_add_device(SPI2_HOST, &devcfg, &dev->spi);
+    if (ret != ESP_OK) {
+        ESP_LOGE(TAG, "spi_bus_add_device failed: %d", ret);
+        return;
+    }
+
+    if (dev->spi == NULL) {
+    ESP_LOGE(TAG, "SPI handle is NULL after successful add!");
+    return;
+    }
+
+    ESP_LOGI(TAG, "SPI handle = %p", dev->spi);
+
+
+    // Объединяем данные для каждой команды
+    tft_send_cmd_with_data(dev,0x01, (uint8_t[]){0x00}, 1);
+    vTaskDelay(pdMS_TO_TICKS(150));
+    
+    // Команда 0xCB с 5 байтами данных
+    tft_send_cmd_with_data(dev,0xCB, (uint8_t[]){0x39, 0x2C, 0x00, 0x34, 0x02}, 5);
+    
+    // Команда 0xCF с 3 байтами данных
+    tft_send_cmd_with_data(dev,0xCF, (uint8_t[]){0x00, 0xC1, 0x30}, 3);
+    
+    // Команда 0xE8 с 3 байтами данных
+    tft_send_cmd_with_data(dev,0xE8, (uint8_t[]){0x85, 0x00, 0x78}, 3);
+    
+    // Команда 0xEA с 2 байтами данных
+    tft_send_cmd_with_data(dev,0xEA, (uint8_t[]){0x00, 0x00}, 2);
+    
+    // Команда 0xED с 4 байтами данных
+    tft_send_cmd_with_data(dev,0xED, (uint8_t[]){0x64, 0x03, 0x12, 0x81}, 4);
+    
+    // Команда 0xF7 с 1 байтом данных
+    tft_send_cmd_with_data(dev,0xF7, (uint8_t[]){0x20}, 1);
+    
+    // Команда 0xC0 с 1 байтом данных
+    tft_send_cmd_with_data(dev,0xC0, (uint8_t[]){0x23}, 1);
+    
+    // Команда 0xC1 с 1 байтом данных
+    tft_send_cmd_with_data(dev,0xC1, (uint8_t[]){0x10}, 1);
+    
+    // Команда 0xC5 с 2 байтами данных
+    tft_send_cmd_with_data(dev,0xC5, (uint8_t[]){0x3E, 0x28}, 2);
+    
+    // Команда 0xC7 с 1 байтом данных
+    tft_send_cmd_with_data(dev,0xC7, (uint8_t[]){0x86}, 1);
+    
+    // Команда 0x36 с 1 байтом данных (ориентация)
+    tft_send_cmd_with_data(dev,0x36, (uint8_t[]){0x48}, 1);
+    
+    // Команда 0x3A с 1 байтом данных (цветовой формат - 0x55 = 16 бит)
+    tft_send_cmd_with_data(dev,0x3A, (uint8_t[]){0x55}, 1);
+    
+    // Команда 0xB1 с 2 байтами данных
+    tft_send_cmd_with_data(dev,0xB1, (uint8_t[]){0x00, 0x18}, 2);
+    
+    // Команда 0xB6 с 3 байтами данных
+    tft_send_cmd_with_data(dev,0xB6, (uint8_t[]){0x08, 0x82, 0x27}, 3);
+    
+    // Команда 0xF2 с 1 байтом данных
+    tft_send_cmd_with_data(dev,0xF2, (uint8_t[]){0x00}, 1);
+    
+    // Команда 0x26 с 1 байтом данных
+    tft_send_cmd_with_data(dev,0x26, (uint8_t[]){0x01}, 1);
+    
+    // Гамма-кривые (по 15 байт каждая)
+    tft_send_cmd_with_data(dev,0xE0, (uint8_t[]){0x0F, 0x31, 0x2B, 0x0C, 0x0E, 
+                                             0x08, 0x4E, 0xF1, 0x37, 0x07, 
+                                             0x10, 0x03, 0x0E, 0x09, 0x00}, 15);
+    
+    tft_send_cmd_with_data(dev,0xE1, (uint8_t[]){0x00, 0x0E, 0x14, 0x03, 0x11, 
+                                             0x07, 0x31, 0xC1, 0x48, 0x08, 
+                                             0x0F, 0x0C, 0x31, 0x36, 0x0F}, 15);
+    
+    // Выход из сна
+    tft_send_cmd_with_data(dev,0x11, NULL, 0);
+    vTaskDelay(pdMS_TO_TICKS(120));
+    
+    // Включение дисплея
+    tft_send_cmd_with_data(dev,0x29, NULL, 0);
+}
+
+
+void tft_send_cmd(tft_device_t *dev, uint8_t cmd)
+{
+    if (xSemaphoreTake(dev->mutex, portMAX_DELAY) != pdTRUE) {
+        return;
+    }
+    
+    gpio_set_level(dev->pin_dc, 0);
+    spi_transaction_t t = {
+        .length = 8,
+        .tx_buffer = &cmd
+    };
+    spi_device_transmit(dev->spi, &t);
+    
+    xSemaphoreGive(dev->mutex);
+    
+
+        esp_err_t ret = spi_device_transmit(dev->spi, &t);
+    if (ret != ESP_OK) {
+        ESP_LOGE(TAG, "spi_device_transmit failed: %s", esp_err_to_name(ret));
+        xSemaphoreGive(dev->mutex);
+        return;
+    }
+}
+
+void tft_send_cmd_with_data(tft_device_t *dev, uint8_t cmd, const uint8_t *data, int len)
+{
+    if (xSemaphoreTake(dev->mutex, portMAX_DELAY) != pdTRUE) {
+        return;
+    }
+    
+    // Отправляем команду
+    gpio_set_level(dev->pin_dc, 0);
+    spi_transaction_t t_cmd = {
+        .length = 8,
+        .tx_buffer = &cmd
+    };
+    spi_device_transmit(dev->spi, &t_cmd);
+    
+    // Отправляем данные
+    if (len > 0) {
+        gpio_set_level(dev->pin_dc, 1);
+        spi_transaction_t t_data = {
+            .length = len * 8,
+            .tx_buffer = data
+        };
+        spi_device_transmit(dev->spi, &t_data);
+    }
+    
+    xSemaphoreGive(dev->mutex);
+}
+
+void tft_fill_pixel(tft_device_t *dev, int x, int y, uint8_t color1, uint8_t color2)
+{
+    
+        // 1. Устанавливаем область на весь экран
+        uint8_t col_data[] = {
+        (x >> 8) & 0xFF,  // Старший байт X
+        x & 0xFF,         // Младший байт X
+        (x >> 8) & 0xFF,  // Старший байт X (конец)
+        x & 0xFF          // Младший байт X (конец)
+    };
+        uint8_t row_data[] = {
+        (y >> 8) & 0xFF,  // Старший байт y
+        y & 0xFF,         // Младший байт y
+        (y >> 8) & 0xFF,  // Старший байт y (конец)
+        y & 0xFF          // Младший байт y (конец)
+    };
+    
+  uint8_t color_data[] = {color1, color2};
+
+    tft_send_cmd_with_data(dev, 0x2A, col_data, 4);
+    tft_send_cmd_with_data(dev, 0x2B, row_data, 4);
+    tft_send_cmd(dev, 0x2C);
+    
+    if (xSemaphoreTake(dev->mutex, portMAX_DELAY) == pdTRUE) {
+    gpio_set_level(dev->pin_dc, 1);
+    spi_transaction_t t = {
+        .length = 16,
+        .tx_buffer = color_data
+    };
+    spi_device_transmit(dev->spi, &t);
+    
+     xSemaphoreGive(dev->mutex);
+    }
+
+    //ESP_LOGI(TAG, "Screen filled with black: %d bytes sent", bytes_to_send);
+}
+
+void tft_fill_screen(tft_device_t *dev)
+{
+        // 1. Устанавливаем область на весь экран
+    uint8_t col_data[] = {0x00, 0x00, 0x00, 0xEF}; // X: 0-319
+    uint8_t row_data[] = {0x00, 0x00, 0x01, 0x3F}; // Y: 0-239
+    
+    tft_send_cmd_with_data(dev, 0x2A, col_data, 4);
+    tft_send_cmd_with_data(dev, 0x2B, row_data, 4);
+    tft_send_cmd(dev, 0x2C); // Memory write
+    
+    // 2. Создаем буфер с черным цветом
+    #define BUF_SIZE 1024 // Отправляем по 1 КБ за раз
+    
+    // Важно: использовать DMA-совместимую память!
+    uint8_t *buf = heap_caps_malloc(BUF_SIZE, MALLOC_CAP_DMA);
+    if (!buf) {
+        ESP_LOGE(TAG, "Failed to allocate buffer");
+        return;
+    }
+    
+    // Заполняем буфер нулями (черный цвет)
+    
+    //uint8_t color_data[] = {0xFF, 0xFF};
+
+    memset(buf, 0, BUF_SIZE);
+    
+    
+    // 3. Отправляем буфер много раз
+    int bytes_to_send = 240 * 320 * 2; // Всего байт для отправки
+    int remaining = bytes_to_send;
+    
+    while (remaining > 0) {
+        int send_size = (remaining > BUF_SIZE) ? BUF_SIZE : remaining;
+        
+        // Отправляем кусок буфера
+        if (xSemaphoreTake(dev->mutex, portMAX_DELAY) == pdTRUE) {
+            gpio_set_level(dev->pin_dc, 1); // Режим данных
+            
+            spi_transaction_t t = {
+                .length = send_size * 8,  // В битах
+                .tx_buffer = buf
+            };
+            spi_device_transmit(dev->spi, &t);
+            
+            xSemaphoreGive(dev->mutex);
+        }
+        
+        remaining -= send_size;
+    }
+    
+    free(buf);
+    //ESP_LOGI(TAG, "Screen filled with black: %d bytes sent", bytes_to_send);
+} 
+
+
+/* static void draw_line_horizontal(uint8_t start, uint8_t finish,uint8_t delta_x , uint16_t color1 , uint16_t color2, uint8_t *buf)
+{
+uint8_t y_start = (start) / delta_x;
+uint8_t x_start = (start % delta_x == 0) ? delta_x : start % delta_x;//start % delta_x; (a % b) ? (a % b) : b;
+uint8_t y_finish = (finish) / delta_x;
+uint8_t x_finish = ((finish % delta_x == 0) ? delta_x : finish % delta_x);//(finish % delta_x)+1;
+
+/ * ESP_LOGE(TAG, "finish = %d", finish);
+ESP_LOGE(TAG, "start = %d", start);
+ESP_LOGE(TAG, "delta = %d", delta_x);  
+ESP_LOGE(TAG, "y_start = %d", y_start);
+ESP_LOGE(TAG, "y_finish = %d", y_finish);
+ESP_LOGE(TAG, "x_start = %d", x_start);
+ESP_LOGE(TAG, "x_finish = %d", x_finish); * /
+
+
+for (int i = start; i <  (finish+delta_x); i = i + delta_x)
+{
+
+
+    buf[(i*2)-1] = color2;
+    buf[(i*2)-2] = color1;
+    ESP_LOGE(TAG, "x = %d",i);
+    //ESP_LOGE(TAG, "y = %d",(uint8_t)round((double)( ((i-1) / (x_finish-x_start + 1)) * (((((x_finish-x_start + 1)*100) / (y_finish-y_start + 1))  ))) / (double)100)+1);
+}
+
+        
+} */
+static void draw_line( uint8_t x_start, uint8_t y_start, uint8_t x_finish, uint8_t y_finish, uint8_t delta_x , uint16_t color1 , uint16_t color2, uint8_t *buf)
+{
+/* ESP_LOGE(TAG, "finish = %d", (x_finish+(y_finish*(delta_x+1))));
+ESP_LOGE(TAG, "start = %d", (x_start+(y_start*(delta_x+1))));
+ESP_LOGE(TAG, "delta = %d", delta_x);  
+ESP_LOGE(TAG, "y_start = %d", y_start);
+ESP_LOGE(TAG, "y_finish = %d", y_finish);
+ESP_LOGE(TAG, "x_start = %d", x_start);
+ESP_LOGE(TAG, "x_finish = %d", x_finish);
+ESP_LOGE(TAG, "|y|= %d", abs(y_finish-y_start ));
+ESP_LOGE(TAG, "|x|= %d", abs(x_finish-x_start ));
+ */
+
+
+
+
+        if (( abs(y_finish-y_start ) ) > (abs(x_finish-x_start )))
+        {
+            for (int i = 0; i <  (y_finish - y_start +1); i++)
+            {
+
+
+                buf[(( (int)round((double)( (i) * (((x_finish-x_start)*100) / (y_finish-y_start))  ) / (double)100)   + ((i+y_start)*(delta_x+1)) + x_start)*2)] = color2;
+                buf[(( (int)round((double)( (i) * (((x_finish-x_start)*100) / (y_finish-y_start))  ) / (double)100)   + ((i+y_start)*(delta_x+1)) + x_start)*2)+1] = color1;
+                //ESP_LOGE(TAG, "x = %d",(uint8_t)round((double)( (i) * (((x_finish-x_start)*100) / (y_finish-y_start))  ) / (double)100));
+                //ESP_LOGE(TAG, "y = %d",((i+y_start)*delta_x) + x_start);
+            }
+
+        }
+        
+//buf[(( (uint8_t)round((double)( ((i) / (x_finish-x_start + 1)) * ((x_finish-x_start + 1)*100) / (y_finish-y_start + 1)) / (double)100)  * i    )*2)-1] = color2;
+//buf[(( (uint8_t)round((double)( ((i) / (x_finish-x_start + 1)) * (((((x_finish-x_start + 1)*100) / (y_finish-y_start + 1))  ))) / (double)100)   + i)*2)-2] = color1;
+        else if ((abs(y_finish-y_start )) <= (abs(x_finish-x_start )))
+        {
+            for (int i = 0; i < abs(x_finish-x_start)+1; i++)
+            {
+
+
+                buf[((     (abs( (int) round ((double)( (i) * (((y_finish-y_start)*100) / (x_finish-x_start))  ) / (double)100) ) + y_start) * (delta_x+1) +(x_start + (i*(x_finish-x_start) / abs(x_finish-x_start) ) )    ) *2)] = color2;
+                buf[((     (abs( (int) round ((double)( (i) * (((y_finish-y_start)*100) / (x_finish-x_start))  ) / (double)100) ) + y_start) * (delta_x+1) +(x_start + (i*(x_finish-x_start) / abs(x_finish-x_start) ) )    )*2)+1] = color1;                        
+                //ESP_LOGE(TAG, "i = %d",((( (int)round(fabs((double)( ((((y_finish-y_start )*10000) / (x_finish-x_start ))* (i) ) / (double)10000)) ) * (delta_x) + (int)round((double)( ((((y_finish-y_start+1 )*10000) / (x_finish-x_start+1 ))* (i) ) / (double)10000))  + (x_start+(y_start*(delta_x+1))) + i)  )));
+                /* if (i == 6)
+                {
+                ESP_LOGE(TAG, "i = %d",i);
+                ESP_LOGE(TAG, "y = %d", (int)round(fabs((double)( ((((y_finish-y_start )) / (x_finish-x_start ))* (i) ) )) ) * (delta_x) + (int)round((double)( ((((y_finish-y_start )) / (x_finish-x_start ))* (i) ))) / * (((y_finish-y_start + 1)*10) / (x_finish-x_start + 1))* (i) * /);
+                ESP_LOGE(TAG, "x = %d", (x_start+(y_start*(delta_x+1))));
+                ESP_LOGE(TAG, "y = %d", (int)round(-5.5));
+                }
+                 buf[((( (int)round(fabs((double)( ((((y_finish-y_start )*10000) / (x_finish-x_start ))* (i) ) / (double)10000)) ) * (delta_x) + (int)round((double)( ((((y_finish-y_start+1 )*10000) / (x_finish-x_start+1 ))* (i) ) / (double)10000))  + (x_start+(y_start*(delta_x+1))) + i)  )*2)] = color2;
+                buf[((( (int)round(fabs((double)( ((((y_finish-y_start )*10000) / (x_finish-x_start ))* (i) ) / (double)10000)) ) * (delta_x) + (int)round((double)( ((((y_finish-y_start+1 )*10000) / (x_finish-x_start+1 ))* (i) ) / (double)10000))  + (x_start+(y_start*(delta_x+1))) + i)  )*2)+1] = color1;                        
+
+                 buf[((( (int)round(fabs((double)( ((((y_finish-y_start )*10000) / (x_finish-x_start ))* (i) ) / (double)10000)) ) * (delta_x) + (int)round((double)( ((((y_finish-y_start+1 )*10000) / (x_finish-x_start+1 ))* (i) ) / (double)10000))  + (x_start+(y_start*(delta_x+1))) + i)  )*2)] = color2;
+                buf[((( (int)round(fabs((double)( ((((y_finish-y_start )*10000) / (x_finish-x_start ))* (i) ) / (double)10000)) ) * (delta_x) + (int)round((double)( ((((y_finish-y_start+1 )*10000) / (x_finish-x_start+1 ))* (i) ) / (double)10000))  + (x_start+(y_start*(delta_x+1))) + i)  )*2)+1] = color1;
+
+                */
+            }
+
+        }
+        
+
+        /*  else if(direction == '\\')
+    {
+        
+
+        if (((y_finish-y_start + 1)) > ((x_finish-x_start + 1)))
+        {
+            for (int i = y_start; i <  (y_finish+1 ); i++)
+            {
+
+
+                buf[( (((i+1)*delta_x)  - (( ( (uint8_t)round( (double)((((x_finish-x_start+1 ) * 100) / (y_finish-y_start )) * (i-y_start)) / (double)100)))   ) - x_start+(y_start-2)*delta_x+1)      *2)-1] = color2;
+                buf[( (((i+1)*delta_x)  - (( ( (uint8_t)round( (double)((((x_finish-x_start+1 ) * 100) / (y_finish-y_start )) * (i-y_start)) / (double)100)))   ) - x_start+(y_start-2)*delta_x+1)     *2)-2] = color1;
+                //ESP_LOGE(TAG, "x = %d", ((i*delta_x)  - (( ( (uint8_t)round( (double)((((x_finish-x_start+1 ) * 100) / (y_finish-y_start )) * (i-y_start)) / (double)100)))   ) + x_start));
+                //ESP_LOGE(TAG, "y = %d", ( (uint8_t)round( (double)((((x_finish-x_start + 1) * 100) / (y_finish-y_start + 1)) * ((i) / (x_finish-x_start + 1)-1)) / (double)100)));
+            }
+
+        }
+//buf[(( (uint8_t)round((double)( ((i) / (x_finish-x_start + 1)) * ((x_finish-x_start + 1)*100) / (y_finish-y_start + 1)) / (double)100)  * i    )*2)-1] = color2;
+//buf[(( (uint8_t)round((double)( ((i) / (x_finish-x_start + 1)) * (((((x_finish-x_start + 1)*100) / (y_finish-y_start + 1))  ))) / (double)100)   + i)*2)-2] = color1;
+        else if (((y_finish-y_start + 1)) <= ((x_finish-x_start + 1)))
+        {
+            for (int i = x_start; i < x_finish+1; i++)
+            {
+
+
+                buf[(( ( ((uint8_t)round((double)( ((((y_finish-y_start+1 )*10000) / (x_finish-x_start ))* (i-x_start)) / (double)10000))+x_start) * (delta_x)) - (i-x_start )- x_start+(y_start-2)*delta_x+1  )*2)-1] = color2;
+                buf[(( ( ((uint8_t)round((double)( ((((y_finish-y_start+1 )*10000) / (x_finish-x_start ))* (i-x_start)) / (double)10000))+x_start) * (delta_x)) - (i-x_start )- x_start+(y_start-2)*delta_x+1  )*2)-2] = color1;                        
+                //ESP_LOGE(TAG, "y = %d",((( (uint8_t)round((double)( ((((y_finish-y_start )*10000) / (x_finish-x_start+1 ))* (i-x_start)) / (double)10000)) * (delta_x)+x_finish - (i-x_start) +1)  ))) / * (((y_finish-y_start + 1)*10) / (x_finish-x_start + 1))* (i) * /;
+                //ESP_LOGE(TAG, "x = %d", i - 1);
+            }
+
+        } 
+        
+        }*/
+
+}
+
+
+    void letter_print(tft_device_t *dev, char letter,  uint8_t y_start, uint8_t x_start, uint8_t y_finish, uint8_t x_finish,  uint16_t color)
+{
+    uint8_t col_data[] = {x_start >> 8, x_start & 0xFF, x_finish >> 8, x_finish & 0xFF};
+    uint8_t row_data[] = {y_start >> 8, y_start & 0xFF, y_finish >> 8, y_finish & 0xFF};
+
+    tft_send_cmd_with_data(dev, 0x2A, col_data, 4); 
+    tft_send_cmd_with_data(dev, 0x2B, row_data, 4);
+    tft_send_cmd(dev, 0x2C);
+    
+    uint8_t *buf = heap_caps_malloc( ((x_finish-x_start + 1) * (y_finish-y_start + 1)) * 2, MALLOC_CAP_DMA);
+    if (!buf) {
+        ESP_LOGE(TAG, "Failed to allocate buffer");
+        return;
+    }
+
+    uint8_t backgound_color = 0;
+
+    memset(buf, backgound_color, ((x_finish-x_start + 1) * (y_finish-y_start + 1)) * 2);//цвет был 24
+
+    uint8_t color1 = color >> 8;
+    uint8_t color2 = color & 0xFF;
+
+    if(letter == 'q')
+    {
+        /* for (int i = x_finish-x_start + 1; i < (x_finish-x_start + 1) * (y_finish-y_start + 1) ; i = i + x_finish-x_start + 1)
+            {
+            buf[(i*2)-1] = color2;
+            buf[(i*2)-2] = color1; 
+            } */
+            //вертикальная линия
+/*             for (int i = (x_finish-x_start + 1) * (y_finish-y_start + 1) ; i > ((x_finish-x_start + 1) * (y_finish-y_start + 1)) - (x_finish-x_start + 1); i--)
+            {
+            buf[(i*2)-1] = color2;
+            buf[(i*2)-2] = color1; 
+            }
+            //две горизонтальные
+            for (int i = (x_finish-x_start + 1)-((x_finish-x_start + 1) - ((x_finish-x_start + 1)/2)) + ((x_finish-x_start+1) * ((y_finish-y_start + 1)/2)); i < (x_finish-x_start + 1) * (y_finish-y_start + 1)  ; i = i + x_finish-x_start + 1)
+            {
+            buf[(i*2)-1] = color2;
+            buf[(i*2)-2] = color1;                
+            }
+            for (int i = (x_finish-x_start + 1) + ((x_finish-x_start+1) * ((y_finish-y_start + 1)/2)); i < (x_finish-x_start + 1) * (y_finish-y_start + 1)  ; i = i + x_finish-x_start + 1)
+            {
+            buf[(i*2)-1] = color2;
+            buf[(i*2)-2] = color1;                
+            }
+            //вертикальная линия
+//int i = (((x_finish-x_start+1) * ((y_finish-y_start + 1)/2))) +  ((x_finish-x_start + 1)/2); i > (((x_finish-x_start+1) * ((y_finish-y_start + 1)/2))) + (x_finish-x_start + 1); i++
+            for (int i = ((x_finish-x_start + 1) / 2) + (y_finish-y_start + 1) * ((x_finish-x_start + 1) / 2); i <((x_finish-x_start + 1)) + (y_finish-y_start + 1) * ((x_finish-x_start + 1) / 2) ; i++)
+            {
+            buf[(i*2)-1] = color2;
+            buf[(i*2)-2] = color1; (char direction,uint8_t y_start, uint8_t x_start, uint8_t y_finish, uint8_t x_finish, uint8_t delta_x , uint16_t color1 , uint16_t color2, uint8_t *buf)
+            } */
+        
+        
+        // draw_line('/', ((x_finish-x_start + 1) * (y_finish-y_start + 1)) - (x_finish-x_start + 1) , ((x_finish-x_start + 1) * (y_finish-y_start + 1))-1 , x_finish-x_start + 1, y_finish-y_start + 1, color1, color2, buf);
+          // draw_line_horizontal( (((x_finish-x_start + 1)) ), ((x_finish-x_start + 1) * (y_finish-y_start + 1)) , x_finish-x_start + 1, color1, color2, buf);
+        // draw_line('/', (((x_finish-x_start + 1)/2) ), ((x_finish-x_start + 1)-1), x_finish-x_start + 1, y_finish-y_start + 1, color1, color2, buf);
+          // draw_line_horizontal( (((x_finish-x_start + 1)/2) ), ((x_finish-x_start + 1) * (y_finish-y_start + 1)) - ((x_finish-x_start + 1)/2)-2 , x_finish-x_start + 1, color1, color2, buf);
+        draw_line( 0, y_finish-y_start,   x_finish-x_start, y_finish-y_start,             x_finish-x_start, color1, color2, buf); 
+        draw_line( x_finish-x_start, 0,   x_finish-x_start, y_finish-y_start,             x_finish-x_start, color1, color2, buf);
+        draw_line( x_finish-x_start, 0,   (x_finish-x_start)/3, 0,                        x_finish-x_start, color1, color2, buf);
+        draw_line( (x_finish-x_start)/3,  0, (x_finish-x_start)/3, y_finish-y_start,      x_finish-x_start, color1, color2, buf);
+        }
+        else if(letter == 'z')
+    {
+        //draw_line_horizontal( ((x_finish-x_start + 1)), ((x_finish-x_start + 1) * (y_finish-y_start + 1)), x_finish-x_start + 1, color1, color2, buf);
+        //draw_line_horizontal( 1, ((x_finish-x_start + 1) * (y_finish-y_start + 1)) - (x_finish-x_start), x_finish-x_start + 1, color1, color2, buf);
+        //draw_line('/', 1, ((x_finish-x_start + 1) * (y_finish-y_start + 1)) , x_finish-x_start + 1, y_finish-y_start + 1, color1, color2, buf);
+        draw_line( x_finish-x_start, 0,   x_finish-x_start, y_finish-y_start,               x_finish-x_start, color1, color2, buf);
+        draw_line( 0, 0,   0, y_finish-y_start,                                             x_finish-x_start, color1, color2, buf);
+        draw_line( 0, 0,   x_finish-x_start, y_finish-y_start,                              x_finish-x_start, color1, color2, buf);
+        
+    }
+
+        else if(letter == 'w')
+    {
+        /* for (int i = x_finish-x_start + 1; i < (x_finish-x_start + 1) * (y_finish-y_start + 1) ; i = i + x_finish-x_start + 1)
+            {
+            buf[(i*2)-1] = color2;
+            buf[(i*2)-2] = color1; 
+            } */
+            //вертикальная линия
+            
+            //одна горизонтальные
+/*             for (int i = 1; i < (x_finish-x_start + 1) * (y_finish-y_start + 1); i = i + x_finish-x_start + 1)
+            {
+            buf[(i*2)-1] = color2;
+            buf[(i*2)-2] = color1;                
+            }
+//for (int i = (x_finish-x_start + 1) * (y_finish-y_start + 1) ; i > ((x_finish-x_start + 1) * (y_finish-y_start + 1)) - (x_finish-x_start + 1); i--)
+            for (int i = (x_finish-x_start + 1) * (y_finish-y_start + 1) ; i > ((x_finish-x_start + 1) * (y_finish-y_start + 1)) - (x_finish-x_start + 1); i--)
+            {
+            buf[(i*2)-1] = color2;
+            buf[(i*2)-2] = color1; 
+            }
+            for (int i = (x_finish-x_start + 1) ; i > 0; i--)
+            {
+            buf[(i*2)-1] = color2;
+            buf[(i*2)-2] = color1; 
+            }
+            for (int i = ((x_finish-x_start + 1)) * ((y_finish-y_start + 1)/2) + ((x_finish-x_start + 1)/2) + ((x_finish-x_start + 1)/4); i > (((x_finish-x_start + 1)) * ((y_finish-y_start + 1)/2)); i--)
+            {
+            buf[(i*2)-1] = color2;
+            buf[(i*2)-2] = color1; 
+            }
+            //вертикальная линия */
+            draw_line( 0, y_finish-y_start,       x_finish-x_start, y_finish-y_start,             x_finish-x_start, color1, color2, buf);
+            draw_line( 0, 0,                      x_finish-x_start, 0,                            x_finish-x_start, color1, color2, buf);
+            draw_line( 0, (y_finish-y_start)/2,   (x_finish-x_start)/2, (y_finish-y_start)/2,     x_finish-x_start, color1, color2, buf);
+            draw_line( 0, 0,                      0, y_finish-y_start,                            x_finish-x_start, color1, color2, buf);
+            
+
+        }
+
+        else if(letter == 'e')
+    {
+        /* for (int i = x_finish-x_start + 1; i < (x_finish-x_start + 1) * (y_finish-y_start + 1) ; i = i + x_finish-x_start + 1)
+            {
+            buf[(i*2)-1] = color2;
+            buf[(i*2)-2] = color1; 
+            } */
+            //вертикальная линия
+            
+            //одна горизонтальные
+            /* for (int i = 1; i < (x_finish-x_start + 1) * (y_finish-y_start + 1)/2; i = i + x_finish-x_start + 1)
+            {
+            buf[(i*2)-1] = color2;
+            buf[(i*2)-2] = color1;                
+            }
+//for (int i = (x_finish-x_start + 1) * (y_finish-y_start + 1) ; i > ((x_finish-x_start + 1) * (y_finish-y_start + 1)) - (x_finish-x_start + 1); i--)
+            for (int i = (x_finish-x_start + 1) ; i > 0; i--)
+            {
+            buf[(i*2)-1] = color2;
+            buf[(i*2)-2] = color1; 
+            }
+
+            for (int i = ((x_finish-x_start + 1)); i < (((x_finish-x_start + 1)) * (y_finish-y_start + 1))/2 + (x_finish-x_start + 2); i = i + x_finish-x_start + 1)
+            {
+            buf[(i*2)-1] = color2;
+            buf[(i*2)-2] = color1;                
+            }
+            for (int i = ((x_finish-x_start + 1)-(x_finish-x_start + 1)/2); i < (((x_finish-x_start + 1)-(x_finish-x_start + 1)/2) * ((y_finish-y_start + 1)/2)+ ((y_finish-y_start + 1)/2))  + (x_finish-x_start + 2); i = i + x_finish-x_start + 1)
+            {
+            buf[(i*2)-1] = color2;
+            buf[(i*2)-2] = color1;                
+            } */
+            //вертикальная линия
+
+            draw_line( 0, 0,                      x_finish-x_start, 0,                            x_finish-x_start, color1, color2, buf);
+            draw_line( x_finish-x_start, 0,       x_finish-x_start, y_finish-y_start,             x_finish-x_start, color1, color2, buf);
+            draw_line( 0, 0,                      0, y_finish-y_start,                            x_finish-x_start, color1, color2, buf);
+            draw_line( (x_finish-x_start)/2, 0,   (x_finish-x_start)/2, (y_finish-y_start)*0.75,         x_finish-x_start, color1, color2, buf);
+        }
+
+        else if(letter == 'r')
+    {
+        /* for (int i = x_finish-x_start + 1; i < (x_finish-x_start + 1) * (y_finish-y_start + 1) ; i = i + x_finish-x_start + 1)
+            {
+            buf[(i*2)-1] = color2;
+            buf[(i*2)-2] = color1; 
+            } */
+            //вертикальная линия
+            
+            //одна горизонтальные
+
+//for (int i = (x_finish-x_start + 1) * (y_finish-y_start + 1) ; i > ((x_finish-x_start + 1) * (y_finish-y_start + 1)) - (x_finish-x_start + 1); i--)
+
+            /* for (int i = (x_finish-x_start + 1) ; i > 0; i--)
+            {
+            buf[(i*2)-1] = color2;
+            buf[(i*2)-2] = color1; 
+            }
+            for (int i = ((x_finish-x_start + 1) - (x_finish-x_start + 1)/ 2) + (y_finish-y_start + 1) * ((x_finish-x_start + 1) - (x_finish-x_start + 1)/ 2); i <((x_finish-x_start + 1)) + (y_finish-y_start + 1) * ((x_finish-x_start + 1) - (x_finish-x_start + 1)/ 2) ; i++)
+            {
+            buf[(i*2)-1] = color2;
+            buf[(i*2)-2] = color1; 
+            }
+            for (int i = ((x_finish-x_start + 1)); i < (((x_finish-x_start + 1)) * (y_finish-y_start + 1))/2 + (x_finish-x_start + 2) + (x_finish-x_start + 2); i = i + x_finish-x_start + 1)
+            {
+            buf[(i*2)-1] = color2;
+            buf[(i*2)-2] = color1;                
+            }
+            for (int i = ((x_finish-x_start + 1)-(x_finish-x_start + 1)/2); i < (((x_finish-x_start + 1)) * ((y_finish-y_start + 1) - (y_finish-y_start + 1)/2)-(x_finish-x_start + 1)/2) + (x_finish-x_start + 2); i = i + x_finish-x_start + 1)
+            {
+            buf[(i*2)-1] = color2;
+            buf[(i*2)-2] = color1;                
+            } */
+            //вертикальная линия
+            draw_line( 0, 0,                                      x_finish-x_start, 0,                            x_finish-x_start, color1, color2, buf);
+            draw_line( x_finish-x_start, 0,                       x_finish-x_start, y_finish-y_start,             x_finish-x_start, color1, color2, buf);
+            draw_line( (x_finish-x_start)/2+1, 0,                  (x_finish-x_start)/2+1, y_finish-y_start,          x_finish-x_start, color1, color2, buf);
+            draw_line( (x_finish-x_start)/2+1, y_finish-y_start,   (x_finish-x_start), y_finish-y_start,            x_finish-x_start, color1, color2, buf);
+            draw_line( (x_finish-x_start)/2+1, 0,                  0, y_finish-y_start,                             x_finish-x_start, color1, color2, buf);
+
+        }
+
+
+         else if(letter == '/')
+    {
+/*         if (((y_finish-y_start + 1)) > ((x_finish-x_start + 1)))
+        {
+            for (int i = x_finish-x_start + 1; i <  (((y_finish-y_start + 1) * (x_finish-x_start + 1))+ x_finish-x_start + 1); i = i + x_finish-x_start + 1)
+            {
+
+
+                buf[(( (uint8_t)round((double)( (((i) / (x_finish-x_start + 1)-1)) * (((((x_finish-x_start )*100) / (y_finish-y_start ))  ))) / (double)100)   + (i) - (x_finish-x_start ))*2)-1] = color2;
+                buf[(( (uint8_t)round((double)( (((i) / (x_finish-x_start + 1)-1)) * (((((x_finish-x_start )*100) / (y_finish-y_start ))  ))) / (double)100)   + (i) - (x_finish-x_start ))*2)-2] = color1;
+                //ESP_LOGE(TAG, "x = %d", (uint8_t)round((double)( (((i) / (x_finish-x_start + 1)-1)) * (((((x_finish-x_start + 1)*100) / (y_finish-y_start + 1))  ))) / (double)100));
+                //ESP_LOGE(TAG, "y = %d",(uint8_t)round((double)( ((i-1) / (x_finish-x_start + 1)) * (((((x_finish-x_start + 1)*100) / (y_finish-y_start + 1))  ))) / (double)100)+1);
+            }
+
+        }
+//buf[(( (uint8_t)round((double)( ((i) / (x_finish-x_start + 1)) * ((x_finish-x_start + 1)*100) / (y_finish-y_start + 1)) / (double)100)  * i    )*2)-1] = color2;
+//buf[(( (uint8_t)round((double)( ((i) / (x_finish-x_start + 1)) * (((((x_finish-x_start + 1)*100) / (y_finish-y_start + 1))  ))) / (double)100)   + i)*2)-2] = color1;
+        else if (((y_finish-y_start + 1)) <= ((x_finish-x_start + 1)))
+        {
+            for (int i = 1; i <  (x_finish-x_start + 1)+1; i++)
+            {
+
+
+                buf[(( (uint8_t)round((double)( ((((y_finish-y_start )*10000) / (x_finish-x_start ))* (i)) / (double)10000)) * (x_finish-x_start + 1)   + i)*2)-1] = color2;
+                buf[(( (uint8_t)round((double)( ((((y_finish-y_start )*10000) / (x_finish-x_start ))* (i)) / (double)10000)) * (x_finish-x_start + 1)   + i)*2)-2] = color1;                        
+                //ESP_LOGE(TAG, "y = %d",(uint8_t)round((double)( (((y_finish-y_start + 1)*10000) / (x_finish-x_start + 1))* (i)) / (double)10000) / * (((y_finish-y_start + 1)*10) / (x_finish-x_start + 1))* (i) *//*);
+                //ESP_LOGE(TAG, "x = %d", i);
+            }
+
+        } */
+      //draw_line(char direction,uint8_t y_start, uint8_t x_start, uint8_t y_finish, uint8_t x_finish, uint8_t delta_x , uint16_t color1 , uint16_t color2, uint8_t *buf)
+        draw_line( 0, 0, x_finish-x_start, y_finish-y_start, x_finish-x_start, color1, color2, buf);
+        
+        }
+
+         else if(letter == '\\')
+    {
+/*         y_finish = y_finish/2;
+        x_finish = x_finish/2; 
+        y_start = y_start/2;
+        x_start = x_start/2; */
+
+        /* if (((y_finish-y_start + 1)) > ((x_finish-x_start + 1)))
+        {
+            for (int i = (x_finish-x_start + 1); i < ((x_finish-x_start + 1) * (y_finish-y_start + 2)) ; i = i + x_finish-x_start + 1)
+            {
+
+
+                buf[( (i - (( ( (uint8_t)round( (double)((((x_finish-x_start ) * 100) / (y_finish-y_start )) * ((i) / (x_finish-x_start + 1)-1)) / (double)100)))   ))     *2)-1] = color2;
+                buf[( (i - (( ( (uint8_t)round( (double)((((x_finish-x_start ) * 100) / (y_finish-y_start )) * ((i) / (x_finish-x_start + 1)-1)) / (double)100)))   ))     *2)-2] = color1;
+                //ESP_LOGE(TAG, "x = %d", (i - (((x_finish-x_start + 1) - ( (uint8_t)round( (double)((((x_finish-x_start + 1) * 100) / (y_finish-y_start + 1)) * ((i) / (x_finish-x_start + 1)-1)) / (double)100)))   )));
+                //ESP_LOGE(TAG, "y = %d", ( (uint8_t)round( (double)((((x_finish-x_start + 1) * 100) / (y_finish-y_start + 1)) * ((i) / (x_finish-x_start + 1)-1)) / (double)100)));
+            }
+
+        }
+//buf[(( (uint8_t)round((double)( ((i) / (x_finish-x_start + 1)) * ((x_finish-x_start + 1)*100) / (y_finish-y_start + 1)) / (double)100)  * i    )*2)-1] = color2;
+//buf[(( (uint8_t)round((double)( ((i) / (x_finish-x_start + 1)) * (((((x_finish-x_start + 1)*100) / (y_finish-y_start + 1))  ))) / (double)100)   + i)*2)-2] = color1;
+        else if (((y_finish-y_start + 1)) <= ((x_finish-x_start + 1)))
+        {
+            for (int i = 1; i <  (x_finish-x_start + 1)+1; i++)
+            {
+
+
+                buf[((    (((uint8_t)round( (double)((((y_finish-y_start ) * 1000) / ((x_finish-x_start  ))) * (i-1)) / (double)1000) + 1) * (x_finish-x_start + 1)) - (i-1)    )*2)-1] = color2;
+                buf[((    (((uint8_t)round( (double)((((y_finish-y_start ) * 1000) / ((x_finish-x_start  ))) * (i-1)) / (double)1000) + 1) * (x_finish-x_start + 1)) - (i-1)    )*2)-2] = color1;                        
+                //ESP_LOGE(TAG, "y = %d",((uint8_t)round( (double)((((y_finish-y_start ) * 1000) / ((x_finish-x_start + 1 ))) * i) / (double)1000))) / * (((y_finish-y_start + 1)*10) / (x_finish-x_start + 1))* (i) */ /*;
+                //ESP_LOGE(TAG, "x = %d", i - 1);
+            }
+
+        } */
+        
+/*         y_finish = y_finish*2;
+        x_finish = x_finish*2; 
+        y_start = y_start*2;
+        x_start = x_start/2; */
+        //draw_line(letter, 3+32, ((x_finish-x_start + 1) * (y_finish-y_start + 1))-17 , x_finish-x_start + 1, y_finish-y_start + 1, color1, color2, buf);
+    draw_line( x_finish-x_start, 0, 0, y_finish-y_start, x_finish-x_start, color1, color2, buf);    
+    }
+
+
+    else if(letter == 'p')
+    {
+        /* for (int i = x_finish-x_start + 1; i < (x_finish-x_start + 1) * (y_finish-y_start + 1) ; i = i + x_finish-x_start + 1)
+            {
+            buf[(i*2)-1] = color2;
+            buf[(i*2)-2] = color1; 
+            } */
+            //вертикальная линия
+            
+            //одна горизонтальные
+
+//for (int i = (x_finish-x_start + 1) * (y_finish-y_start + 1) ; i > ((x_finish-x_start + 1) * (y_finish-y_start + 1)) - (x_finish-x_start + 1); i--)
+
+           /*  for (int i = (x_finish-x_start + 1) ; i > 0; i--)
+            {
+            buf[(i*2)-1] = color2;
+            buf[(i*2)-2] = color1; 
+            }
+            for (int i = ((x_finish-x_start + 1) - (x_finish-x_start + 1)/ 2) + (y_finish-y_start + 1) * ((x_finish-x_start + 1) - (x_finish-x_start + 1)/ 2); i <((x_finish-x_start + 1)) + (y_finish-y_start + 1) * ((x_finish-x_start + 1) - (x_finish-x_start + 1)/ 2) ; i++)
+            {
+            buf[(i*2)-1] = color2;
+            buf[(i*2)-2] = color1; 
+            }
+            for (int i = ((x_finish-x_start + 1)); i < (((x_finish-x_start + 1)) * (y_finish-y_start + 1))/2 + (x_finish-x_start + 2) + (x_finish-x_start + 2); i = i + x_finish-x_start + 1)
+            {
+            buf[(i*2)-1] = color2;
+            buf[(i*2)-2] = color1;                
+            }
+            for (int i = ((x_finish-x_start + 1)-(x_finish-x_start + 1)/2); i < (((x_finish-x_start + 1)) * ((y_finish-y_start + 1) - (y_finish-y_start + 1)/2)-(x_finish-x_start + 1)/2) + (x_finish-x_start + 2); i = i + x_finish-x_start + 1)
+            {
+            buf[(i*2)-1] = color2;
+            buf[(i*2)-2] = color1;                
+            } */
+            //вертикальная линия
+            draw_line( 0, 0,                                      x_finish-x_start, 0,                            x_finish-x_start, color1, color2, buf);
+            draw_line( x_finish-x_start, 0,                       x_finish-x_start, y_finish-y_start,             x_finish-x_start, color1, color2, buf);
+            draw_line( (x_finish-x_start)/2, 0,                  (x_finish-x_start)/2, y_finish-y_start,          x_finish-x_start, color1, color2, buf);
+            draw_line( (x_finish-x_start)/2, y_finish-y_start,   (x_finish-x_start), y_finish-y_start,            x_finish-x_start, color1, color2, buf);
+
+        }
+
+        else if(letter == 'a')
+    {
+        /* for (int i = x_finish-x_start + 1; i < (x_finish-x_start + 1) * (y_finish-y_start + 1) ; i = i + x_finish-x_start + 1)
+            {
+            buf[(i*2)-1] = color2;
+            buf[(i*2)-2] = color1; 
+            } */
+            //вертикальная линия
+            
+            //одна горизонтальные
+
+//for (int i = (x_finish-x_start + 1) * (y_finish-y_start + 1) ; i > ((x_finish-x_start + 1) * (y_finish-y_start + 1)) - (x_finish-x_start + 1); i--)
+
+/*             for (int i = (x_finish-x_start + 1) ; i > 0; i--)
+            {
+            buf[(i*2)-1] = color2;
+            buf[(i*2)-2] = color1; 
+            }
+            for (int i = (x_finish-x_start + 1) * (y_finish-y_start + 1) ; i > ((x_finish-x_start + 1) * (y_finish-y_start + 1)) - (x_finish-x_start + 1); i--)
+            {
+            buf[(i*2)-1] = color2;
+            buf[(i*2)-2] = color1; 
+            }
+            for (int i = ((x_finish-x_start + 1)); i < (((x_finish-x_start + 1)) * (y_finish-y_start + 1)); i = i + x_finish-x_start + 1)
+            {
+            buf[(i*2)-1] = color2;
+            buf[(i*2)-2] = color1;                
+            }
+            for (int i = ((x_finish-x_start + 1)-(x_finish-x_start + 1)/2); i < (((x_finish-x_start + 1)) * ((y_finish-y_start + 1))-(x_finish-x_start + 1)/2); i = i + x_finish-x_start + 1)
+            {
+            buf[(i*2)-1] = color2;
+            buf[(i*2)-2] = color1;                
+            } */
+            draw_line( x_finish-x_start, 0,       x_finish-x_start, y_finish-y_start,             x_finish-x_start, color1, color2, buf);
+            draw_line( (x_finish-x_start)/2, 0,   (x_finish-x_start)/2, y_finish-y_start,         x_finish-x_start, color1, color2, buf);
+            
+            draw_line( 0, y_finish-y_start,       x_finish-x_start, y_finish-y_start,             x_finish-x_start, color1, color2, buf);
+            draw_line( 0, 0,                      x_finish-x_start, 0,                            x_finish-x_start, color1, color2, buf);
+
+            //вертикальная линия
+        }
+
+        else if(letter == 'f')
+    {
+        /* for (int i = x_finish-x_start + 1; i < (x_finish-x_start + 1) * (y_finish-y_start + 1) ; i = i + x_finish-x_start + 1)
+            {
+            buf[(i*2)-1] = color2;
+            buf[(i*2)-2] = color1; 
+            } */
+            //вертикальная линия
+            
+            //одна горизонтальные
+
+//for (int i = (x_finish-x_start + 1) * (y_finish-y_start + 1) ; i > ((x_finish-x_start + 1) * (y_finish-y_start + 1)) - (x_finish-x_start + 1); i--)
+/* 
+            for (int i = (x_finish-x_start + 1) ; i > 0; i--)
+            {
+            buf[(i*2)-1] = color2;
+            buf[(i*2)-2] = color1; 
+            }
+            for (int i = ((x_finish-x_start + 1)); i < ((((x_finish-x_start + 1)) * (y_finish-y_start + 1)) - (y_finish-y_start + 1)/4); i = i + x_finish-x_start + 1)
+            {
+            buf[(i*2)-1] = color2;
+            buf[(i*2)-2] = color1;                
+            }
+            for (int i = ((x_finish-x_start + 1)-(x_finish-x_start + 1)/2); i < (((x_finish-x_start + 1)) * ((y_finish-y_start + 1) - (y_finish-y_start + 1)/4)-(x_finish-x_start + 1)/2); i = i + x_finish-x_start + 1)
+            {
+            buf[(i*2)-1] = color2;
+            buf[(i*2)-2] = color1;                
+            } */
+            //вертикальная линия
+
+            draw_line( 0, 0,                                      x_finish-x_start, 0,                            x_finish-x_start, color1, color2, buf);
+            draw_line( x_finish-x_start, 0,                       x_finish-x_start, y_finish-y_start,             x_finish-x_start, color1, color2, buf);
+            draw_line( (x_finish-x_start)/2, 0,                  (x_finish-x_start)/2, y_finish-y_start,          x_finish-x_start, color1, color2, buf);
+
+
+        }
+        else if(letter == 't')
+    {
+        draw_line( 0, (y_finish-y_start)/2,                   x_finish-x_start, (y_finish-y_start)/2,         x_finish-x_start, color1, color2, buf);
+        draw_line( x_finish-x_start, 0,                       x_finish-x_start, y_finish-y_start,             x_finish-x_start, color1, color2, buf);
+    }
+     
+    else if(letter == 'y')
+    {
+        draw_line( 0, (y_finish-y_start)/2,                                  (x_finish-x_start)/2, (y_finish-y_start)/2,                            x_finish-x_start, color1, color2, buf);
+        draw_line( (x_finish-x_start)/2, (y_finish-y_start)/2,               x_finish-x_start, y_finish-y_start,                                    x_finish-x_start, color1, color2, buf);
+        draw_line( x_finish-x_start, 0,                                      ((x_finish-x_start)/2)-1, (y_finish-y_start)/2,                        x_finish-x_start, color1, color2, buf);
+    }
+
+     else if(letter == 'u')
+    {
+            draw_line( 1, y_finish-y_start,       x_finish-x_start, y_finish-y_start,             x_finish-x_start, color1, color2, buf);
+            draw_line( 0, 0,                      x_finish-x_start, 0,                            x_finish-x_start, color1, color2, buf);
+            draw_line( 0, 0,                      0, y_finish-y_start-1,                          x_finish-x_start, color1, color2, buf);
+    }
+    
+    else if(letter == 'i')
+    {
+        draw_line( 0, (y_finish-y_start)/2,                   x_finish-x_start, (y_finish-y_start)/2,         x_finish-x_start, color1, color2, buf);
+        draw_line( x_finish-x_start, 0,                       x_finish-x_start, y_finish-y_start,             x_finish-x_start, color1, color2, buf);
+        draw_line( 0, 0,                                      0, y_finish-y_start,                            x_finish-x_start, color1, color2, buf);
+    }
+    else if(letter == 'o')
+    {
+        draw_line( 0, 0,                      x_finish-x_start, 0,                            x_finish-x_start, color1, color2, buf);
+        draw_line( x_finish-x_start, 0,       x_finish-x_start, y_finish-y_start,             x_finish-x_start, color1, color2, buf);
+        draw_line( 0, 0,                      0, y_finish-y_start,                            x_finish-x_start, color1, color2, buf);
+         draw_line( 0, y_finish-y_start,      x_finish-x_start, y_finish-y_start,             x_finish-x_start, color1, color2, buf);
+    }
+    else if(letter == '[')
+    {
+        draw_line( 0, 0,                      x_finish-x_start, 0,                            x_finish-x_start, color1, color2, buf);
+        draw_line( x_finish-x_start, 0,       x_finish-x_start, y_finish-y_start,             x_finish-x_start, color1, color2, buf);
+        draw_line( 0, 0,                      0, y_finish-y_start,                            x_finish-x_start, color1, color2, buf);
+    }
+    else if(letter == ']')
+    {
+        draw_line( x_finish-x_start, 0,       x_finish-x_start, y_finish-y_start,             x_finish-x_start, color1, color2, buf);
+        draw_line( 0, 0,                      0, y_finish-y_start,                            x_finish-x_start, color1, color2, buf);
+        draw_line( 0, y_finish-y_start,       x_finish-x_start, y_finish-y_start,             x_finish-x_start, color1, color2, buf);
+    }
+    else if(letter == '{')
+    {
+        draw_line( 0, 1,                        x_finish-x_start, 1,                            x_finish-x_start, color1, color2, buf);
+        draw_line( x_finish-x_start, 1,         x_finish-x_start, y_finish-y_start,             x_finish-x_start, color1, color2, buf);
+        draw_line( 0, 1,                        0, y_finish-y_start,                            x_finish-x_start, color1, color2, buf);
+        draw_line( (x_finish-x_start)/2, 0,     (x_finish-x_start)/2 +1, 0,                     x_finish-x_start, color1, color2, buf);
+
+        
+    }
+        else if(letter == '}')
+    {
+        draw_line( x_finish-x_start, 0,                         x_finish-x_start, y_finish-y_start-1,              x_finish-x_start, color1, color2, buf);
+        draw_line( 0, 0,                                        0, y_finish-y_start -1,                            x_finish-x_start, color1, color2, buf);
+        draw_line( 0, y_finish-y_start-1,                       x_finish-x_start, y_finish-y_start -1,             x_finish-x_start, color1, color2, buf);
+        draw_line( (x_finish-x_start)/2, y_finish-y_start,      (x_finish-x_start)/2 +1, y_finish-y_start,         x_finish-x_start, color1, color2, buf);
+    }
+        else if(letter == 's')
+    {
+        draw_line( x_finish-x_start, 0,                                     x_finish-x_start, y_finish-y_start,                                   x_finish-x_start, color1, color2, buf);
+        draw_line( 0, 0,                                                    0, y_finish-y_start,                                                  x_finish-x_start, color1, color2, buf);
+        draw_line( x_finish-x_start, 0,                                     ((x_finish-x_start)/3) + ((x_finish-x_start)/3), 0,                   x_finish-x_start, color1, color2, buf);
+        draw_line( ((x_finish-x_start)/3) + ((x_finish-x_start)/3), 0,      (x_finish-x_start)/3, y_finish-y_start,                               x_finish-x_start, color1, color2, buf);
+        draw_line( (x_finish-x_start)/3,y_finish-y_start,                   0, y_finish-y_start,                                                  x_finish-x_start, color1, color2, buf);
+
+    }
+        else if(letter == 'd')
+    {
+        draw_line( (x_finish-x_start)/2, 0,   (x_finish-x_start)/2, y_finish-y_start,               x_finish-x_start, color1, color2, buf);
+        draw_line( 0, 0,                      0, y_finish-y_start,                                  x_finish-x_start, color1, color2, buf);
+        draw_line( 0, y_finish-y_start,       x_finish-x_start, y_finish-y_start,                   x_finish-x_start, color1, color2, buf);
+        draw_line( 0, 0,                      (x_finish-x_start)/2, 0,                              x_finish-x_start, color1, color2, buf);
+    } 
+            else if(letter == 'g')
+    {
+            draw_line( 0, 0,                                                                    x_finish-x_start, 0,                                      x_finish-x_start, color1, color2, buf);
+            draw_line( x_finish-x_start, 0,                                                     x_finish-x_start, y_finish-y_start,                       x_finish-x_start, color1, color2, buf);
+            draw_line( 0, 0,                                                                    0, y_finish-y_start,                                      x_finish-x_start, color1, color2, buf);
+            draw_line( (x_finish-x_start)/2,y_finish-y_start,                                   0, y_finish-y_start,                                      x_finish-x_start, color1, color2, buf);
+            draw_line( (x_finish-x_start)/2, (y_finish-y_start)*0.8,                            (x_finish-x_start)/2, y_finish-y_start,                   x_finish-x_start, color1, color2, buf);
+    }
+           else if(letter == 'h')
+    {
+            draw_line( 0, 0,                      x_finish-x_start, 0,                            x_finish-x_start, color1, color2, buf);
+            draw_line( (x_finish-x_start)/2, 0,   (x_finish-x_start)/2, y_finish-y_start,         x_finish-x_start, color1, color2, buf);
+            draw_line( 0, y_finish-y_start,       (x_finish-x_start)/2, y_finish-y_start,         x_finish-x_start, color1, color2, buf);
+    }
+    else if(letter == 'j')
+    {
+            draw_line( 0, 0,                      0, y_finish-y_start,                            x_finish-x_start, color1, color2, buf);
+            draw_line( 0, y_finish-y_start,       x_finish-x_start, y_finish-y_start,             x_finish-x_start, color1, color2, buf);
+            draw_line( 0, 0,                      (x_finish-x_start)/3, 0,                        x_finish-x_start, color1, color2, buf);
+    }
+            else if(letter == 'k')
+    {
+            draw_line( 0, 0,                                      x_finish-x_start, 0,                            x_finish-x_start, color1, color2, buf);
+            draw_line( (x_finish-x_start)/2, 0,                   (x_finish-x_start), y_finish-y_start,           x_finish-x_start, color1, color2, buf);
+            draw_line( (x_finish-x_start)/2+1, 0,                 0, y_finish-y_start,                            x_finish-x_start, color1, color2, buf);
+    }
+    else if(letter == 'l')
+    {
+        draw_line( 0, 0,                      x_finish-x_start, 0,                            x_finish-x_start, color1, color2, buf);
+        draw_line( 0, 0,                      0, y_finish-y_start,                            x_finish-x_start, color1, color2, buf);
+    }
+    else if(letter == ';')
+    {
+        draw_line( x_finish-x_start-1, y_finish-y_start,           x_finish-x_start, y_finish-y_start,                  x_finish-x_start, color1, color2, buf);
+        draw_line( x_finish-x_start-1, y_finish-y_start-1,         x_finish-x_start-1, y_finish-y_start,                x_finish-x_start, backgound_color, backgound_color, buf);
+        draw_line( 0, y_finish-y_start-1,                          1, y_finish-y_start,                                 x_finish-x_start, color1, color2, buf);
+    }
+    else if(letter == ':')
+    {
+        draw_line( x_finish-x_start-1, y_finish-y_start,         x_finish-x_start, y_finish-y_start,                 x_finish-x_start, color1, color2, buf);
+        draw_line( x_finish-x_start-1, y_finish-y_start-1,       x_finish-x_start-1, y_finish-y_start,               x_finish-x_start, backgound_color, backgound_color, buf);
+        
+        draw_line( 0, y_finish-y_start,         1, y_finish-y_start,             x_finish-x_start, color1, color2, buf);
+        draw_line( 1, y_finish-y_start-1,       1, y_finish-y_start,             x_finish-x_start, backgound_color, backgound_color, buf);
+    }
+/*     else if(letter == '\"')
+    {
+        draw_line( 0, y_finish-y_start,      x_finish-x_start, y_finish-y_start,        x_finish-x_start, color1, color2, buf);
+        draw_line( 0, 0,                     x_finish-x_start, 0,                       x_finish-x_start, color1, color2, buf);
+    } */
+    else if(letter == '|')
+    {
+        draw_line(0, y_finish-y_start,         x_finish-x_start, y_finish-y_start,             x_finish-x_start, color1, color2, buf);
+    }
+    else if(letter == '+')
+    {
+        draw_line(0, (y_finish-y_start)/2,             x_finish-x_start, (y_finish-y_start)/2,             x_finish-x_start, color1, color2, buf);
+        draw_line((x_finish-x_start)/2, 0,             (x_finish-x_start)/2, y_finish-y_start,             x_finish-x_start, color1, color2, buf);
+    }
+    else if(letter == '_')
+    {
+        draw_line(0, 0,         0, y_finish-y_start,             x_finish-x_start, color1, color2, buf);
+    }
+    else if(letter == 'x')
+    {
+        draw_line(0, 0,                        x_finish-x_start, y_finish-y_start,      x_finish-x_start, color1, color2, buf);
+        draw_line(x_finish-x_start, 0,         0, y_finish-y_start,                     x_finish-x_start, color1, color2, buf);
+    }
+    else if(letter == 'c')
+    {
+        draw_line( 1, 0,                      x_finish-x_start-1, 0,                          x_finish-x_start, color1, color2, buf);
+        draw_line( x_finish-x_start, 1,       x_finish-x_start, y_finish-y_start,             x_finish-x_start, color1, color2, buf);
+        draw_line( 0, 1,                      0, y_finish-y_start,                            x_finish-x_start, color1, color2, buf);
+    }
+    else if(letter == 'v')
+    {
+        draw_line(x_finish-x_start, 0,              0, (y_finish-y_start)/2,                     x_finish-x_start, color1, color2, buf);
+        draw_line(0, (y_finish-y_start)/2,          x_finish-x_start, y_finish-y_start,          x_finish-x_start, color1, color2, buf);
+    }
+    else if(letter == 'v')
+    {
+        draw_line(x_finish-x_start, 0,              0, (y_finish-y_start)/2,                     x_finish-x_start, color1, color2, buf);
+        draw_line(0, (y_finish-y_start)/2,          x_finish-x_start, y_finish-y_start,          x_finish-x_start, color1, color2, buf);
+    }
+    else if(letter == 'b')
+    {
+
+        draw_line( 0, 0,                      x_finish-x_start, 0,                            x_finish-x_start, color1, color2, buf);
+        draw_line( 0, 0,                      0, y_finish-y_start,                            x_finish-x_start, color1, color2, buf);
+        draw_line( (x_finish-x_start)/2, 0,   (x_finish-x_start)/2, y_finish-y_start,         x_finish-x_start, color1, color2, buf);
+        draw_line( 0, y_finish-y_start,       (x_finish-x_start)/2, y_finish-y_start,         x_finish-x_start, color1, color2, buf);
+    }
+    else if(letter == 'n')
+    {
+        draw_line( 0, 0,                      x_finish-x_start, 0,                             x_finish-x_start, color1, color2, buf);
+        draw_line( x_finish-x_start, 0,       x_finish-x_start, y_finish-y_start-1,            x_finish-x_start, color1, color2, buf);
+        draw_line( 0, y_finish-y_start,       x_finish-x_start-1, y_finish-y_start,            x_finish-x_start, color1, color2, buf);
+    }
+    else if(letter == 'm')
+    {
+        draw_line( 0, 0,                                            x_finish-x_start, 0,                                x_finish-x_start, color1, color2, buf);
+        draw_line( x_finish-x_start, 0,                             x_finish-x_start, y_finish-y_start-1,               x_finish-x_start, color1, color2, buf);
+        draw_line( 0, y_finish-y_start,                             x_finish-x_start-1, y_finish-y_start,               x_finish-x_start, color1, color2, buf);
+        draw_line( (x_finish-x_start)/3, (y_finish-y_start)/2,      x_finish-x_start, (y_finish-y_start)/2,             x_finish-x_start, color1, color2, buf);
+    }
+    else if(letter == '.')
+    {
+        draw_line( 0, 0,         1, 0,                 x_finish-x_start, color1, color2, buf);
+        draw_line( 1, 0,         2, 0,                 x_finish-x_start, backgound_color, backgound_color, buf);
+    }
+    else if(letter == '?')
+    {
+        draw_line( (x_finish-x_start)*0.75, 0,                     x_finish-x_start, (y_finish-y_start)/2,                          x_finish-x_start, color1, color2, buf);
+        draw_line( x_finish-x_start, (y_finish-y_start)/2,         x_finish-x_start, (y_finish-y_start)*0.699,                      x_finish-x_start, color1, color2, buf);
+        draw_line( x_finish-x_start, (y_finish-y_start)*0.699,     (x_finish-x_start)*0.75, (y_finish-y_start),                     x_finish-x_start, color1, color2, buf);
+        draw_line( (x_finish-x_start)/2, (y_finish-y_start)/2,     (x_finish-x_start)*0.75, (y_finish-y_start),                     x_finish-x_start, color1, color2, buf);
+        
+        draw_line( 0, (y_finish-y_start)/2,                        0, (y_finish-y_start)/2+1,                                         x_finish-x_start, color1, color2, buf);
+        draw_line( 0, (y_finish-y_start)/2+1,                      1, (y_finish-y_start)/2+1,                                         x_finish-x_start, backgound_color, backgound_color, buf);
+    }
+    else if(letter == '<')
+    {
+        draw_line( (x_finish-x_start)/2, 0,     x_finish-x_start, y_finish-y_start,                          x_finish-x_start, color1, color2, buf);
+        draw_line( (x_finish-x_start)/2, 0,     0, y_finish-y_start,                                         x_finish-x_start, color1, color2, buf);
+    }
+        else if(letter == '>')
+    {
+        draw_line( 0, 0,                      (x_finish-x_start)/2, y_finish-y_start,                        x_finish-x_start, color1, color2, buf);
+        draw_line( (x_finish-x_start), 0,     (x_finish-x_start)/2, y_finish-y_start,                        x_finish-x_start, color1, color2, buf);
+    }
+    else if(letter == '=')
+    {
+        draw_line( 0, 0,                      0, y_finish-y_start,                                       x_finish-x_start, color1, color2, buf);
+        draw_line( x_finish-x_start, 0,       x_finish-x_start, y_finish-y_start,                        x_finish-x_start, color1, color2, buf);
+    }
+        else if(letter == '!')
+    {
+        draw_line( 2, 0,                      x_finish-x_start, 0,                                       x_finish-x_start, color1, color2, buf);
+
+        draw_line( 0, 0,                        1, 0,                                         x_finish-x_start, color1, color2, buf);
+        draw_line( 1, 0,                        2, 0,                                         x_finish-x_start, backgound_color, backgound_color, buf);
+    }
+    else if(letter == '1')
+    {
+        draw_line( 0, 0,                            0, y_finish-y_start,                                       x_finish-x_start, color1, color2, buf);
+        draw_line( 0, (y_finish-y_start)/2,         x_finish-x_start, (y_finish-y_start)/2,                    x_finish-x_start, color1, color2, buf);
+        draw_line( (x_finish-x_start)*0.75, 0,      x_finish-x_start, (y_finish-y_start)/2,                    x_finish-x_start, color1, color2, buf);
+    }
+    else if(letter == '2')
+    {
+        draw_line( (x_finish-x_start)*0.75, 0,                     x_finish-x_start, (y_finish-y_start)/2,                          x_finish-x_start, color1, color2, buf);
+        draw_line( x_finish-x_start, (y_finish-y_start)/2,         x_finish-x_start, (y_finish-y_start)*0.699,                      x_finish-x_start, color1, color2, buf);
+        draw_line( x_finish-x_start, (y_finish-y_start)*0.699,     (x_finish-x_start)*0.75, (y_finish-y_start),                     x_finish-x_start, color1, color2, buf);
+        draw_line( 0, 0,                                           (x_finish-x_start)*0.75, (y_finish-y_start),                     x_finish-x_start, color1, color2, buf);
+        draw_line( 0, 0,                                           0, y_finish-y_start,                                             x_finish-x_start, color1, color2, buf);
+    }
+    else if(letter == '3')
+    {
+        draw_line( 0, y_finish-y_start,                             x_finish-x_start,  y_finish-y_start,            x_finish-x_start, color1, color2, buf);
+        draw_line( x_finish-x_start, 0,                             x_finish-x_start, y_finish-y_start,             x_finish-x_start, color1, color2, buf);
+        draw_line( 0, 0,                                            0, y_finish-y_start,                            x_finish-x_start, color1, color2, buf);
+        draw_line( (x_finish-x_start)/2, (y_finish-y_start)/4,      (x_finish-x_start)/2, (y_finish-y_start),       x_finish-x_start, color1, color2, buf);
+    }
+    else if(letter == '4')
+    {
+        draw_line( 0, y_finish-y_start,   x_finish-x_start, y_finish-y_start,             x_finish-x_start, color1, color2, buf); 
+        draw_line( x_finish-x_start, 0,   (x_finish-x_start)/2, 0,                        x_finish-x_start, color1, color2, buf);
+        draw_line( (x_finish-x_start)/2,  0, (x_finish-x_start)/2, y_finish-y_start,      x_finish-x_start, color1, color2, buf);
+    }
+     else if(letter == '5')
+    {
+        draw_line( x_finish-x_start, 0,                                     x_finish-x_start, y_finish-y_start,                                   x_finish-x_start, color1, color2, buf);
+        draw_line( 0, 0,                                                    0, y_finish-y_start-1,                                                x_finish-x_start, color1, color2, buf);
+        draw_line( x_finish-x_start, 0,                                     ((x_finish-x_start)/3) + ((x_finish-x_start)/3), 0,                   x_finish-x_start, color1, color2, buf);
+        draw_line( ((x_finish-x_start)/3) + ((x_finish-x_start)/3), 0,      (x_finish-x_start)/2 +1, y_finish-y_start-1,                          x_finish-x_start, color1, color2, buf);
+        draw_line( (x_finish-x_start)/2,y_finish-y_start,                   1, y_finish-y_start,                                                  x_finish-x_start, color1, color2, buf);
+
+    }
+        else if(letter == '6')
+    {
+        draw_line( x_finish-x_start, 0,       x_finish-x_start, y_finish-y_start,             x_finish-x_start, color1, color2, buf);
+        draw_line( 0, 0,                      x_finish-x_start, 0,                            x_finish-x_start, color1, color2, buf);
+        draw_line( 0, 0,                      0, y_finish-y_start,                            x_finish-x_start, color1, color2, buf);
+        draw_line( (x_finish-x_start)/2, 0,   (x_finish-x_start)/2, y_finish-y_start,         x_finish-x_start, color1, color2, buf);
+        draw_line( 0, y_finish-y_start,       (x_finish-x_start)/2, y_finish-y_start,         x_finish-x_start, color1, color2, buf);
+    }
+    else if(letter == '7')
+    {
+        draw_line( x_finish-x_start, 0,       x_finish-x_start, y_finish-y_start,             x_finish-x_start, color1, color2, buf);
+        draw_line(0, (y_finish-y_start)/2,    x_finish-x_start, y_finish-y_start,             x_finish-x_start, color1, color2, buf);
+    }
+    else if(letter == '8')
+    {
+        draw_line( (x_finish-x_start)*0.75, 0,                     x_finish-x_start, (y_finish-y_start)/3,                          x_finish-x_start, color1, color2, buf);
+        draw_line( x_finish-x_start, (y_finish-y_start)/3,         x_finish-x_start, (y_finish-y_start)*0.699,                      x_finish-x_start, color1, color2, buf);
+        draw_line( x_finish-x_start, (y_finish-y_start)*0.699,     (x_finish-x_start)*0.75, (y_finish-y_start),                     x_finish-x_start, color1, color2, buf);
+
+        draw_line( (x_finish-x_start)/4, 0,                        (x_finish-x_start)*0.75, (y_finish-y_start),                     x_finish-x_start, color1, color2, buf);
+        draw_line( (x_finish-x_start)*0.75, 0,                     (x_finish-x_start)/4, (y_finish-y_start),                        x_finish-x_start, color1, color2, buf);
+        draw_line( 0, (y_finish-y_start)/3,                        0, (y_finish-y_start)*0.699,                                     x_finish-x_start, color1, color2, buf);
+
+        draw_line( (x_finish-x_start)/4, 0,                        0, (y_finish-y_start)/3,                                        x_finish-x_start, color1, color2, buf);
+        draw_line( 0, (y_finish-y_start)*0.699,                    (x_finish-x_start)/4, (y_finish-y_start),                       x_finish-x_start, color1, color2, buf);
+    }
+        if(letter == '9')
+    {
+        draw_line( 0, 0,                  0, y_finish-y_start,                            x_finish-x_start, color1, color2, buf);
+        draw_line( 0, y_finish-y_start,   x_finish-x_start, y_finish-y_start,             x_finish-x_start, color1, color2, buf); 
+        draw_line( x_finish-x_start, 0,   x_finish-x_start, y_finish-y_start,             x_finish-x_start, color1, color2, buf);
+        draw_line( x_finish-x_start, 0,   (x_finish-x_start)/2, 0,                        x_finish-x_start, color1, color2, buf);
+        draw_line( (x_finish-x_start)/2,  0, (x_finish-x_start)/2, y_finish-y_start,      x_finish-x_start, color1, color2, buf);
+        }
+    else if(letter == '0')
+    {
+        draw_line( 1, 0,                        x_finish-x_start-1, 0,                                                      x_finish-x_start, color1, color2, buf);
+        draw_line( x_finish-x_start, 1,         x_finish-x_start, y_finish-y_start-1,                                       x_finish-x_start, color1, color2, buf);
+        draw_line( 0, 1,                        0, y_finish-y_start-1,                                                      x_finish-x_start, color1, color2, buf);
+        draw_line( 1, y_finish-y_start,         x_finish-x_start-1, y_finish-y_start,                                       x_finish-x_start, color1, color2, buf);
+        //draw_line( 1, 0,                        (x_finish-x_start)-1, y_finish-y_start,                                     x_finish-x_start, color1, color2, buf);
+    }
+    else if(letter == '(')
+    {
+        draw_line( (x_finish-x_start)/3, 0,                        0, y_finish-y_start,                                         x_finish-x_start, color1, color2, buf);
+        draw_line( (x_finish-x_start)/3, 0,                        (x_finish-x_start)/3+(x_finish-x_start)/3, 0,                x_finish-x_start, color1, color2, buf);
+        draw_line( (x_finish-x_start)/3+(x_finish-x_start)/3, 0,   x_finish-x_start, y_finish-y_start,                          x_finish-x_start, color1, color2, buf);
+
+        //draw_line( 1, 0,                        (x_finish-x_start)-1, y_finish-y_start,                                     x_finish-x_start, color1, color2, buf);
+    }
+    else if(letter == ')')
+    {
+        draw_line( (x_finish-x_start), 0,                           (x_finish-x_start)/3+(x_finish-x_start)/3, y_finish-y_start,                                     x_finish-x_start, color1, color2, buf);
+        draw_line( (x_finish-x_start)/3, y_finish-y_start,          (x_finish-x_start)/3+(x_finish-x_start)/3, y_finish-y_start,                x_finish-x_start, color1, color2, buf);
+        draw_line( 0, 0,                                            (x_finish-x_start)/3, y_finish-y_start,                x_finish-x_start, color1, color2, buf);
+
+        //draw_line( 1, 0,                        (x_finish-x_start)-1, y_finish-y_start,                                     x_finish-x_start, color1, color2, buf);
+    }
+    else if(letter == '*')
+    {
+        draw_line(0, (y_finish-y_start)/2,              x_finish-x_start, (y_finish-y_start)/2,         x_finish-x_start, color1, color2, buf);
+        draw_line(1, 0,                                 x_finish-x_start-1, y_finish-y_start,           x_finish-x_start, color1, color2, buf);
+        draw_line(x_finish-x_start-1, 0,                1, y_finish-y_start,                            x_finish-x_start, color1, color2, buf);
+        //draw_line( 1, 0,                        (x_finish-x_start)-1, y_finish-y_start,                                     x_finish-x_start, color1, color2, buf);
+    }
+    int bytes_to_send = ((x_finish-x_start + 1) * (y_finish-y_start + 1)) * 2; // Всего байт для отправки
+    
+
+        if (xSemaphoreTake(dev->mutex, portMAX_DELAY) == pdTRUE) {
+            gpio_set_level(dev->pin_dc, 1); // Режим данных
+            
+            spi_transaction_t t = {
+                .length = bytes_to_send * 8,  // В битах
+                .tx_buffer = buf
+            };
+            spi_device_transmit(dev->spi, &t);
+            
+            xSemaphoreGive(dev->mutex);
+        
+    }
+    
+    free(buf);
+
+
+}
+
+
+// ОСНОВНОЙ ФАЙЛ
+
+/* #include "freertos/FreeRTOS.h"
+#include "freertos/task.h"
+#include "freertos/queue.h"
+
+TaskHandle_t Hello = NULL; // Дескриптор (хэндл) задачи
+TaskHandle_t Hello1 = NULL; // Дескриптор (хэндл) задачи
+
+static QueueHandle_t int_queue = NULL;
+
+// Функция‑задача Hello_Task
+void Hello_Task(void *arg){
+    int r;
+    while(1){
+    for (int i = 0; i <= 100; i = i + 2)
+    {
+        xQueueSend(int_queue, &i, pdMS_TO_TICKS(0));
+        
+           // printf("otprav: %d\n", i);
+        
+        vTaskDelay(pdMS_TO_TICKS(30));
+        xQueueReceive(int_queue, &r, pdMS_TO_TICKS(0));
+    }
+}
+}
+
+void Hello_Task1(void *arg){
+    int prin;
+    while(1){
+        xQueueReceive(int_queue, &prin, portMAX_DELAY);
+        printf("polychen: %d\n", prin);
+        vTaskDelay(pdMS_TO_TICKS(70));
+
+    }
+}
+ void print_task(void *arg)
+{
+
+}
+void app_main(void) {
+    // Создание задачи
+    int_queue = xQueueCreate(2, sizeof(int));  // 10 элементов по 4 байта
+    xTaskCreate(Hello_Task, "Hello0", 1024, NULL, 10, &Hello);
+    xTaskCreate(Hello_Task1, "Hello1", 2048, NULL, 20, &Hello1);
+} */
+
+
+#include "freertos/FreeRTOS.h"
+#include "freertos/task.h"
+#include "freertos/semphr.h"
+#include "driver/spi_master.h"
+#include "driver/gpio.h"
+#include "esp_log.h"
+#include "mvu_tft.h"
+
+#define PIN_NUM_MISO  GPIO_NUM_NC  
+#define PIN_NUM_MOSI  45
+#define PIN_NUM_CLK   14
+#define PIN_NUM_CS    3
+#define PIN_NUM_DC    2
+#define PIN_NUM_RST   46
+
+tft_device_t dev_tft = {
+    .width = 320,
+    .height = 240,
+    .rotation = 0,
+    .pin_dc = PIN_NUM_DC,
+    .pin_rst = PIN_NUM_RST,
+    .pin_cs = PIN_NUM_CS,
+    .pin_mosi = PIN_NUM_MOSI,
+    .pin_miso = PIN_NUM_MISO,
+    .pin_clk = PIN_NUM_CLK
+};
+
+static void tft_task(void *arg)
+{
+    char letter = '?';
+    tft_fill_screen(&dev_tft);
+    printf("tft_fill_screen");
+    //char letter = 'w';
+/*     letter_print(&dev_tft, letter, 10, 50 + 100, 22, 62 + 100, 0xFFFF);
+    letter_print(&dev_tft, letter, 25, 50 + 100, 22+15, 56 + 100, 0xFFFF);
+    letter_print(&dev_tft, letter, 10, 50 + 100 +15, 16, 62 + 100 +15, 0xFFFF);
+    letter_print(&dev_tft, letter, 10, 50 + 100 - 15, 15, 55 + 100 -15, 0xFFFF); */
+
+
+
+    letter_print(&dev_tft, 'q', 10, 220, 14, 224, 0xFFFF);
+    letter_print(&dev_tft, 'w', 10 + 12, 220, 14 + 12, 224, 0xFFFF);
+    letter_print(&dev_tft, 'e', 10 + 24, 220, 14 + 24, 224, 0xFFFF);
+    letter_print(&dev_tft, 'r', 10 + 36, 220, 14 + 36, 224, 0xFFFF);
+    letter_print(&dev_tft, 't', 10 + 48, 220, 14 + 48, 224, 0xFFFF);
+    letter_print(&dev_tft, 'y', 10 + 60, 220, 14 + 60, 224, 0xFFFF);
+    letter_print(&dev_tft, 'u', 10 + 12*6, 220, 14 + 12*6, 224, 0xFFFF);
+    letter_print(&dev_tft, 'i', 10 + 12*7, 220, 14 + 12*7, 224, 0xFFFF);
+    letter_print(&dev_tft, 'o', 10 + 12*8, 220, 14 + 12*8, 224, 0xFFFF);
+    letter_print(&dev_tft, 'p', 10 + 12*9, 220, 14 + 12*9, 224, 0xFFFF);
+    letter_print(&dev_tft, '[', 10 + 12*10, 220, 14 + 12*10, 224, 0xFFFF);
+    letter_print(&dev_tft, ']', 10 + 12*11, 220, 14 + 12*11, 224, 0xFFFF);
+    letter_print(&dev_tft, '{', 10 + 12*12, 220, 14 + 12*12, 224, 0xFFFF);
+    letter_print(&dev_tft, '}', 10 + 12*13, 220, 14 + 12*13, 224, 0xFFFF);
+
+    letter_print(&dev_tft, 'a', 10, 210, 14, 214, 0xFFFF);
+    letter_print(&dev_tft, 's', 10 + 12, 210, 13 + 12, 214, 0xFFFF);
+    letter_print(&dev_tft, 'd', 10 + 24, 210, 14 + 24, 214, 0xFFFF);
+    letter_print(&dev_tft, 'f', 10 + 36, 210, 14 + 36, 214, 0xFFFF);
+    letter_print(&dev_tft, 'g', 10 + 48, 210, 14 + 48, 214, 0xFFFF);
+    letter_print(&dev_tft, 'h', 10 + 60, 210, 14 + 60, 214, 0xFFFF);
+    letter_print(&dev_tft, 'j', 10 + 12*6, 210, 14 + 12*6, 214, 0xFFFF);
+    letter_print(&dev_tft, 'k', 10 + 12*7, 210, 14 + 12*7, 214, 0xFFFF);
+    letter_print(&dev_tft, 'l', 10 + 12*8, 210, 14 + 12*8, 214, 0xFFFF);
+    letter_print(&dev_tft, ';', 10 + 12*9, 210, 14 + 12*9, 214, 0xFFFF);
+    letter_print(&dev_tft, ':', 10 + 12*10, 210, 14 + 12*10, 214, 0xFFFF);
+    letter_print(&dev_tft, '|', 10 + 12*11, 210, 14 + 12*11, 214, 0xFFFF);
+    letter_print(&dev_tft, '+', 10 + 12*12, 210, 14 + 12*12, 214, 0xFFFF);
+    letter_print(&dev_tft, '_', 10 + 12*13, 210, 14 + 12*13, 214, 0xFFFF);
+
+    letter_print(&dev_tft, 'z', 10, 200, 14, 204, 0xFFFF);
+    letter_print(&dev_tft, 'x', 10 + 12, 200, 13 + 12, 204, 0xFFFF);
+    letter_print(&dev_tft, 'c', 10 + 24, 200, 14 + 24, 204, 0xFFFF);
+    letter_print(&dev_tft, 'v', 10 + 36, 200, 14 + 36, 204, 0xFFFF);
+    letter_print(&dev_tft, 'b', 10 + 48, 200, 14 + 48, 204, 0xFFFF);
+    letter_print(&dev_tft, 'n', 10 + 60, 200, 14 + 60, 204, 0xFFFF);
+    letter_print(&dev_tft, 'm', 10 + 12*6, 200, 14 + 12*6, 204, 0xFFFF);
+    letter_print(&dev_tft, '.', 10 + 12*7, 200, 14 + 12*7, 204, 0xFFFF);
+    letter_print(&dev_tft, '?', 10 + 12*8, 200, 15 + 12*8, 205, 0xFFFF);
+    letter_print(&dev_tft, '/', 10 + 12*9, 200, 14 + 12*9, 204, 0xFFFF);
+    letter_print(&dev_tft, '<', 10 + 12*10, 200, 14 + 12*10, 204, 0xFFFF);
+    letter_print(&dev_tft, '>', 10 + 12*11, 200, 14 + 12*11, 204, 0xFFFF);
+    letter_print(&dev_tft, '\\', 10 + 12*12, 200, 14 + 12*12, 204, 0xFFFF);
+    letter_print(&dev_tft, '=', 10 + 12*13, 200, 14 + 12*13, 204, 0xFFFF);
+
+    letter_print(&dev_tft, '1', 10, 190, 14, 194, 0xFFFF);
+    letter_print(&dev_tft, '2', 10 + 12, 190, 13 + 12, 194, 0xFFFF);
+    letter_print(&dev_tft, '3', 10 + 24, 190, 14 + 24, 194, 0xFFFF);
+    letter_print(&dev_tft, '4', 10 + 36, 190, 14 + 36, 194, 0xFFFF);
+    letter_print(&dev_tft, '5', 10 + 48, 190, 14 + 48, 195, 0xFFFF);
+    letter_print(&dev_tft, '6', 10 + 60, 190, 14 + 60, 194, 0xFFFF);
+    letter_print(&dev_tft, '7', 10 + 12*6, 190, 14 + 12*6, 194, 0xFFFF);
+    letter_print(&dev_tft, '8', 10 + 12*7, 190, 13 + 12*7, 195, 0xFFFF);
+    letter_print(&dev_tft, '9', 10 + 12*8, 190, 14 + 12*8, 194, 0xFFFF);
+    letter_print(&dev_tft, '0', 10 + 12*9, 190, 14 + 12*9, 194, 0xFFFF);
+    letter_print(&dev_tft, '(', 10 + 12*10, 190, 11 + 12*10, 195, 0xFFFF);
+    letter_print(&dev_tft, ')', 10 + 12*11, 190, 11 + 12*11, 195, 0xFFFF);
+    letter_print(&dev_tft, '*', 10 + 12*12, 190, 14 + 12*12, 194, 0xFFFF);
+    letter_print(&dev_tft, '!', 10 + 12*13, 190, 14 + 12*13, 195, 0xFFFF);
+
+    letter_print(&dev_tft, 'm', 10, 170, 16, 175, 0xFFFF);
+    letter_print(&dev_tft, 'a', 10 + 12, 170, 15 + 12, 175, 0xFFFF);
+    letter_print(&dev_tft, 'x', 10 + 24, 170, 15 + 24, 175, 0xFFFF);
+    letter_print(&dev_tft, '.', 10 + 36, 170, 15 + 36, 175, 0xFFFF);
+    letter_print(&dev_tft, '5', 10 + 48, 170, 15 + 48, 175, 0xFFFF);
+    letter_print(&dev_tft, '6', 10 + 57, 170, 15 + 57, 175, 0xFFFF);
+    letter_print(&dev_tft, 's', 10 + 12*6, 170, 15 + 12*6, 176, 0xFFFF);
+    letter_print(&dev_tft, 'i', 10 + 12*7, 170, 15 + 12*7, 175, 0xFFFF);
+    letter_print(&dev_tft, 'm', 10 + 12*8, 170, 16 + 12*8, 175, 0xFFFF);
+    letter_print(&dev_tft, 'v', 10 + 12*9, 170, 15 + 12*9, 175, 0xFFFF);
+    letter_print(&dev_tft, 'o', 10 + 12*10, 170, 15 + 12*10, 175, 0xFFFF);
+    letter_print(&dev_tft, 'l', 10 + 12*11, 170, 15 + 12*11, 175, 0xFFFF);
+    letter_print(&dev_tft, 'o', 10 + 12*12, 170, 15 + 12*12, 175, 0xFFFF);
+    letter_print(&dev_tft, 'v', 10 + 12*13, 170, 15 + 12*13, 175, 0xFFFF);
+
+    letter_print(&dev_tft, 's', 10, 150, 22, 162, 0xFFFF);
+    letter_print(&dev_tft, 'a', 10 + 16, 150, 22 + 16, 162, 0xFFFF);
+    letter_print(&dev_tft, 's', 10 + 32, 150, 22 + 32, 162, 0xFFFF);
+    letter_print(&dev_tft, 'a', 10 + 48, 150, 22 + 48, 162, 0xFFFF);
+    letter_print(&dev_tft, 't', 10 + 64, 150, 22 + 64, 162, 0xFFFF);
+    letter_print(&dev_tft, '!', 10 + 80, 150, 22 + 80, 162, 0xFFFF);
+    letter_print(&dev_tft, '!', 10 + 83, 150, 22 + 83, 162, 0xFFFF);
+    letter_print(&dev_tft, '!', 10 + 86, 150, 22 + 86, 162, 0xFFFF);
+/*     letter_print(&dev_tft, 'm', 10 + 12*8, 150, 22 + 12*8, 162, 0xFFFF);
+    letter_print(&dev_tft, 'v', 10 + 12*9, 150, 22 + 12*9, 162, 0xFFFF);
+    letter_print(&dev_tft, 'o', 10 + 12*10, 150, 22 + 12*10, 162, 0xFFFF);
+    letter_print(&dev_tft, 'l', 10 + 12*11, 150, 22 + 12*11, 162, 0xFFFF);
+    letter_print(&dev_tft, 'o', 10 + 12*12, 150, 22 + 12*12, 162, 0xFFFF);
+    letter_print(&dev_tft, 'v', 10 + 12*13, 150, 22 + 12*13, 162, 0xFFFF); */
+
+    //letter_print(&dev_tft, 'q', 10+7, 50 + 100, 37+7, 77 + 100, 0xFFFF);
+    letter_print(&dev_tft, 'q', 10, 50 + 20, 14, 54 + 20, 0xFFFF);
+    letter_print(&dev_tft, 'w', 10 + 12, 50 + 20, 14 + 12, 54 + 20, 0xFFFF);
+    letter_print(&dev_tft, 'e', 10 + 24, 50 + 20, 14 + 24, 54 + 20, 0xFFFF);
+    letter_print(&dev_tft, 'p', 10 + 36, 50 + 20, 14 + 36, 54 + 20, 0xFFFF);
+
+    letter_print(&dev_tft, 'i', 10, 50 + 30, 14, 60 + 30, 0xFFFF);
+    letter_print(&dev_tft, 'r', 10 + 12, 50 + 30, 14 + 12, 60 + 30, 0xFFFF);
+    letter_print(&dev_tft, 'o', 10 + 24, 50 + 30, 14 + 24, 60 + 30, 0xFFFF);
+    letter_print(&dev_tft, 'u', 10 + 36, 50 + 30, 14 + 36, 60 + 30, 0xFFFF);
+    letter_print(&dev_tft, 's', 10 + 48, 50 + 30, 14 + 48, 60 + 30, 0xFFFF);  
+    while (1) {
+        
+        for (int k = 0; k < 320  ; k = k + 1)
+        {
+            for (int x = 0; x < 240  ; x = x + 1 + k)
+            {
+                for (int y = 0; y <320  ; y = y  + x + k + 1)
+                {
+                    tft_fill_pixel(&dev_tft, x, y, 0xFF, 0xFF);
+                    vTaskDelay(pdMS_TO_TICKS(7));
+                    //printf("%d, %d\n", x, y);
+                }
+            }
+            //vTaskDelay(pdMS_TO_TICKS(7));
+        }
+        vTaskDelay(pdMS_TO_TICKS(500));
+
+        
+        for (int k = 0; k < 320  ; k = k + 1)
+        {
+            for (int x = 0; x < 240  ; x = x + 1 + k)
+            {
+                for (int y = 0; y <320  ; y = y  + x + k + 1)
+                {
+                    tft_fill_pixel(&dev_tft, x, y, 0x00, 0x00);
+                    vTaskDelay(pdMS_TO_TICKS(7));
+                    //printf("%d, %d\n", x, y);
+                }
+            }
+            //vTaskDelay(pdMS_TO_TICKS(7));
+        }
+
+    }
+}
+
+
+
+void app_main(void)
+{
+
+    tft_init(&dev_tft);
+
+    
+    xTaskCreate(
+        tft_task,
+        "tft_task",
+        16384 * 2, 
+        NULL,
+        5,
+        NULL
+    );
+}
