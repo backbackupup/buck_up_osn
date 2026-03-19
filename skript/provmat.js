@@ -1452,7 +1452,7 @@ r += `\n${vr_RIM}`;
              await tp.app.fileManager.processFrontMatter(based_put, (frontmatter) => { frontmatter[`${based_data}_i_zad${i}`] = i_zad[i-1]});
 
                 var inf_baz = tp.file.find_tfile("ЕГЭ/subjects/infa/infa_stat");
-    var stolb = i;
+    var stolb = i + 1;
     var strok = 2 * 29;
     var ya = stolb + strok;
 
@@ -1811,7 +1811,7 @@ r += `\n${vr_RIM}`;
              await tp.app.fileManager.processFrontMatter(based_put, (frontmatter) => { frontmatter[`${based_data}_RIM_i_zad_obsh${i}`] = RIM_i_zad_obsh[i-1]});
 
     var inf_baz = tp.file.find_tfile("ЕГЭ/subjects/infa/infa_stat");
-    var stolb = i;
+    var stolb = i + 1;
     var strok = 3 * 29;
     var ya = stolb + strok;
 
@@ -1863,7 +1863,7 @@ r += `\n${vr_RIM}`;
              await tp.app.fileManager.processFrontMatter(based_put, (frontmatter) => { frontmatter[`${based_data}_RIM_i_zad_prav${i}`] = RIM_i_zad_prav[i-1]});
 
                 var inf_baz = tp.file.find_tfile("ЕГЭ/subjects/infa/infa_stat");
-    var stolb = i;
+    var stolb = i + 1;
     var strok = 4 * 29;
     var ya = stolb + strok;
 
@@ -1914,7 +1914,7 @@ r += `\n${vr_RIM}`;
 
 
             var inf_baz = tp.file.find_tfile("ЕГЭ/subjects/infa/infa_stat");
-            var stolb = i;
+            var stolb = i + 1;
             var strok = 5 * 29;
             var ya = stolb + strok;
 
