@@ -14,7 +14,8 @@
 		{"id":"6b5cdc25d44a656b","type":"text","text":"Main Menu ","x":1025,"y":-880,"width":192,"height":52},
 		{"id":"13c5b1a5b566b8ed","type":"text","text":"Input_system","x":1121,"y":-775,"width":192,"height":52},
 		{"id":"b9b38bf583dbf488","type":"text","text":"Протоколы передачи данных ","x":1218,"y":-633,"width":192,"height":52},
-		{"id":"02f8b9ab367787b4","type":"text","text":"Модульная система управления ","x":1409,"y":-721,"width":192,"height":52}
+		{"id":"02f8b9ab367787b4","type":"text","text":"Модульная система управления ","x":1409,"y":-721,"width":192,"height":52},
+		{"id":"14d697de9b6a1f94","type":"text","text":"Разметка","x":220,"y":-669,"width":187,"height":50}
 	],
 	"edges":[
 		{"id":"434c8758c5715f12","fromNode":"33ab56501c0446e7","fromSide":"top","toNode":"f544d2b591f31bf5","toSide":"bottom"},
@@ -35,6 +36,8 @@
 		{"id":"7734fe893521ae62","fromNode":"13c5b1a5b566b8ed","fromSide":"top","toNode":"6b5cdc25d44a656b","toSide":"right"},
 		{"id":"c518d1d496cafd63","fromNode":"21f7d4bfe7d35d9f","fromSide":"top","toNode":"6b5cdc25d44a656b","toSide":"left"},
 		{"id":"06c4a7954466433f","fromNode":"b9b38bf583dbf488","fromSide":"top","toNode":"13c5b1a5b566b8ed","toSide":"bottom"},
-		{"id":"1d446c25a5ea2878","fromNode":"02f8b9ab367787b4","fromSide":"left","toNode":"13c5b1a5b566b8ed","toSide":"right"}
+		{"id":"1d446c25a5ea2878","fromNode":"02f8b9ab367787b4","fromSide":"left","toNode":"13c5b1a5b566b8ed","toSide":"right"},
+		{"id":"f3ac857ae5b0909f","fromNode":"4837b21b871597b8","fromSide":"top","toNode":"f544d2b591f31bf5","toSide":"bottom"},
+		{"id":"c7b78b8f6d8c9c5f","fromNode":"14d697de9b6a1f94","fromSide":"right","toNode":"21f7d4bfe7d35d9f","toSide":"left"}
 	]
 }
