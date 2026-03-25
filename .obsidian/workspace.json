@@ -11,10 +11,14 @@
             "id": "27d96d642d429a0e",
             "type": "leaf",
             "state": {
-              "type": "graph",
-              "state": {},
-              "icon": "lucide-git-fork",
-              "title": "Граф"
+              "type": "markdown",
+              "state": {
+                "file": "Свои заметки/Буфер/Базис буфер.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "Базис буфер"
             }
           },
           {
@@ -232,9 +236,9 @@
   },
   "active": "27d96d642d429a0e",
   "lastOpenFiles": [
+    "Новый день.md",
     "ЕГЭ/subjects/infa/infa_stat.md",
     "ЕГЭ/Дни/2026_03_24.md",
-    "Новый день.md",
     "ЕГЭ/sluj/cash/BASED9.md",
     "ЕГЭ/календарь.md.md",
     "Свои заметки/Фильмы.md",
