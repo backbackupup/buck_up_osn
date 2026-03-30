@@ -41,12 +41,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "ЕГЭ/subjects/russ/russ_stat.md",
+                "file": "ЕГЭ/subjects/mat/mat_stat.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "russ_stat"
+              "title": "mat_stat"
             }
           },
           {
@@ -55,16 +55,16 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "ЕГЭ/subjects/mat/mat_stat.md",
+                "file": "ЕГЭ/subjects/russ/russ_stat.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "mat_stat"
+              "title": "russ_stat"
             }
           }
         ],
-        "currentTab": 2
+        "currentTab": 3
       }
     ],
     "direction": "vertical"
@@ -249,17 +249,21 @@
       "templater-obsidian:Templater": false
     }
   },
-  "active": "40a73492f53fefc0",
+  "active": "413f4f60405f10b8",
   "lastOpenFiles": [
-    "ЕГЭ/subjects/перевод заданий и баллов.md",
-    "ЕГЭ/subjects/infa/infa_stat.md",
     "ЕГЭ/subjects/mat/mat_stat.md",
+    "ЕГЭ/subjects/infa/infa_stat.md",
+    "ЕГЭ/subjects/перевод заданий и баллов.md",
+    "ЕГЭ/subjects/russ/russ_stat.md",
+    "ЕГЭ/Дни/2026_03_30.md",
+    "Новый день.md",
+    "ЕГЭ/Дни/2026_03_29.md",
+    "ЕГЭ/Дни/2026_03_28.md",
+    "ЕГЭ/календарь.md.md",
+    "ЕГЭ/subjects/mat/m_zad5.md",
     "ЕГЭ/Дни/2026_03_25.md",
     "ЕГЭ/subjects/infa/i_zad11.md",
-    "ЕГЭ/календарь.md.md",
     "ЕГЭ/Дни/2026_03_27.md",
-    "Новый день.md",
-    "ЕГЭ/subjects/russ/russ_stat.md",
     "ЕГЭ/Дни/2026_03_26.md",
     "ЕГЭ/subjects/mat/m_zad1.md",
     "ЕГЭ/subjects/mat/m_zad9.md",
@@ -275,10 +279,6 @@
     "ЕГЭ/Дни/2026_03_21.md",
     "Новый день 1.md",
     "ЕГЭ/subjects/russ/r_zad13.md",
-    "ЕГЭ/subjects/mat/m_zad7.md",
-    "ЕГЭ/subjects/mat/m_zad6.md",
-    "ЕГЭ/subjects/infa/i_zad7.md",
-    "ЕГЭ/Дни/2026_03_20.md",
     "библиотека",
     "Свои заметки/Проекты/МВУ/Иерархия библиотек.canvas",
     "Свои заметки/Проекты/МВУ/Экран/Низкоуровневые функции",
