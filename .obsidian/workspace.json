@@ -11,10 +11,14 @@
             "id": "27d96d642d429a0e",
             "type": "leaf",
             "state": {
-              "type": "graph",
-              "state": {},
-              "icon": "lucide-git-fork",
-              "title": "Граф"
+              "type": "markdown",
+              "state": {
+                "file": "ЕГЭ/subjects/перевод заданий и баллов.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "перевод заданий и баллов"
             }
           },
           {
@@ -59,7 +63,8 @@
               "title": "mat_stat"
             }
           }
-        ]
+        ],
+        "currentTab": 2
       }
     ],
     "direction": "vertical"
@@ -244,17 +249,17 @@
       "templater-obsidian:Templater": false
     }
   },
-  "active": "27d96d642d429a0e",
+  "active": "40a73492f53fefc0",
   "lastOpenFiles": [
+    "ЕГЭ/subjects/перевод заданий и баллов.md",
+    "ЕГЭ/subjects/infa/infa_stat.md",
+    "ЕГЭ/subjects/mat/mat_stat.md",
     "ЕГЭ/Дни/2026_03_25.md",
     "ЕГЭ/subjects/infa/i_zad11.md",
     "ЕГЭ/календарь.md.md",
-    "ЕГЭ/subjects/infa/infa_stat.md",
     "ЕГЭ/Дни/2026_03_27.md",
     "Новый день.md",
-    "ЕГЭ/subjects/перевод заданий и баллов.md",
     "ЕГЭ/subjects/russ/russ_stat.md",
-    "ЕГЭ/subjects/mat/mat_stat.md",
     "ЕГЭ/Дни/2026_03_26.md",
     "ЕГЭ/subjects/mat/m_zad1.md",
     "ЕГЭ/subjects/mat/m_zad9.md",
