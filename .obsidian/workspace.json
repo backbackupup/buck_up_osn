@@ -27,12 +27,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "ЕГЭ/календарь.md.md",
+                "file": "ЕГЭ/subjects/infa/infa_stat.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "календарь.md"
+              "title": "infa_stat"
             }
           },
           {
@@ -74,7 +74,7 @@
             }
           }
         ],
-        "currentTab": 1
+        "currentTab": 4
       }
     ],
     "direction": "vertical"
@@ -259,16 +259,17 @@
       "templater-obsidian:Templater": false
     }
   },
-  "active": "153078c287cabe8d",
+  "active": "9e7487a349161bf7",
   "lastOpenFiles": [
-    "ЕГЭ/subjects/mat/m_zad1.md",
+    "temples/Сегодня.md",
+    "ЕГЭ/subjects/infa/infa_stat.md",
+    "ЕГЭ/subjects/перевод заданий и баллов.md",
     "ЕГЭ/календарь.md.md",
+    "ЕГЭ/subjects/mat/m_zad1.md",
     "ЕГЭ/Дни/2026_04_06.md",
     "Новый день.md",
     "ЕГЭ/Дни/2026_04_05.md",
     "ЕГЭ/Дни/2026_04_04.md",
-    "ЕГЭ/subjects/перевод заданий и баллов.md",
-    "ЕГЭ/subjects/infa/infa_stat.md",
     "ЕГЭ/subjects/mat/mat_stat.md",
     "ЕГЭ/subjects/russ/russ_stat.md",
     "ЕГЭ/Дни/2026_04_03.md",
@@ -286,7 +287,6 @@
     "ЕГЭ/subjects/infa/i_zad11.md",
     "ЕГЭ/Дни/2026_03_27.md",
     "ЕГЭ/Дни/2026_03_26.md",
-    "ЕГЭ/subjects/mat/m_zad9.md",
     "Свои заметки/Проекты/Изображения/463401a27aad67ef067aec2c76d06819382b4995.png",
     "ter",
     "библиотека",
