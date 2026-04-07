@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "ЕГЭ/subjects/перевод заданий и баллов.md",
+                "file": "ЕГЭ/Дни/2026_04_07.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "перевод заданий и баллов"
+              "title": "2026_04_07"
             }
           },
           {
@@ -67,18 +67,14 @@
             "id": "9e7487a349161bf7",
             "type": "leaf",
             "state": {
-              "type": "markdown",
-              "state": {
-                "file": "Свои заметки/Буфер/Базис буфер.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "Базис буфер"
+              "type": "graph",
+              "state": {},
+              "icon": "lucide-git-fork",
+              "title": "Граф"
             }
           }
         ],
-        "currentTab": 4
+        "currentTab": 2
       }
     ],
     "direction": "vertical"
@@ -263,19 +259,22 @@
       "templater-obsidian:Templater": false
     }
   },
-  "active": "9e7487a349161bf7",
+  "active": "40a73492f53fefc0",
   "lastOpenFiles": [
-    "temples/Сегодня.md",
+    "ЕГЭ/Дни/2026_04_07.md",
+    "ЕГЭ/subjects/russ/russ_stat.md",
+    "ЕГЭ/subjects/mat/mat_stat.md",
     "ЕГЭ/subjects/infa/infa_stat.md",
+    "Новый день.md",
+    "ЕГЭ/sluj/cash/BASED11.md",
     "ЕГЭ/subjects/перевод заданий и баллов.md",
+    "Свои заметки/Буфер/Базис буфер.md",
+    "temples/Сегодня.md",
     "ЕГЭ/календарь.md.md",
     "ЕГЭ/subjects/mat/m_zad1.md",
     "ЕГЭ/Дни/2026_04_06.md",
-    "Новый день.md",
     "ЕГЭ/Дни/2026_04_05.md",
     "ЕГЭ/Дни/2026_04_04.md",
-    "ЕГЭ/subjects/mat/mat_stat.md",
-    "ЕГЭ/subjects/russ/russ_stat.md",
     "ЕГЭ/Дни/2026_04_03.md",
     "ЕГЭ/Дни/2026_04_02.md",
     "ЕГЭ/subjects/mat/m_zad7.md",
@@ -288,9 +287,6 @@
     "ЕГЭ/Дни/2026_03_28.md",
     "ЕГЭ/subjects/mat/m_zad5.md",
     "ЕГЭ/Дни/2026_03_25.md",
-    "ЕГЭ/subjects/infa/i_zad11.md",
-    "ЕГЭ/Дни/2026_03_27.md",
-    "ЕГЭ/Дни/2026_03_26.md",
     "Свои заметки/Проекты/Изображения/463401a27aad67ef067aec2c76d06819382b4995.png",
     "ter",
     "библиотека",
