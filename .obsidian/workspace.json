@@ -74,7 +74,7 @@
             }
           }
         ],
-        "currentTab": 2
+        "currentTab": 1
       }
     ],
     "direction": "vertical"
@@ -259,12 +259,17 @@
       "templater-obsidian:Templater": false
     }
   },
-  "active": "40a73492f53fefc0",
+  "active": "153078c287cabe8d",
   "lastOpenFiles": [
-    "ЕГЭ/Дни/2026_04_07.md",
-    "ЕГЭ/subjects/russ/russ_stat.md",
-    "ЕГЭ/subjects/mat/mat_stat.md",
+    "ЕГЭ/subjects/infa/i_zad5.md",
     "ЕГЭ/subjects/infa/infa_stat.md",
+    "ЕГЭ/subjects/infa/i_zad4.md",
+    "ЕГЭ/subjects/infa/i_zad2.md",
+    "ЕГЭ/subjects/russ/russ_stat.md",
+    "ЕГЭ/subjects/russ/r_zad13.md",
+    "ЕГЭ/subjects/russ/r_zad11.md",
+    "ЕГЭ/Дни/2026_04_07.md",
+    "ЕГЭ/subjects/mat/mat_stat.md",
     "Новый день.md",
     "ЕГЭ/sluj/cash/BASED11.md",
     "ЕГЭ/subjects/перевод заданий и баллов.md",
@@ -282,11 +287,6 @@
     "ЕГЭ/Дни/2026_03_31.md",
     "ЕГЭ/sluj/cash/BASED10.md",
     "ЕГЭ/subjects/russ/r_zad12.md",
-    "ЕГЭ/Дни/2026_03_30.md",
-    "ЕГЭ/Дни/2026_03_29.md",
-    "ЕГЭ/Дни/2026_03_28.md",
-    "ЕГЭ/subjects/mat/m_zad5.md",
-    "ЕГЭ/Дни/2026_03_25.md",
     "Свои заметки/Проекты/Изображения/463401a27aad67ef067aec2c76d06819382b4995.png",
     "ter",
     "библиотека",
