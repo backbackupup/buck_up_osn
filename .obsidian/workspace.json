@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "ЕГЭ/Дни/2026_04_10.md",
+                "file": "Свои заметки/Фильмы.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "2026_04_10"
+              "title": "Фильмы"
             }
           },
           {
@@ -73,8 +73,7 @@
               "title": "Граф"
             }
           }
-        ],
-        "currentTab": 3
+        ]
       }
     ],
     "direction": "vertical"
@@ -259,17 +258,17 @@
       "templater-obsidian:Templater": false
     }
   },
-  "active": "413f4f60405f10b8",
+  "active": "27d96d642d429a0e",
   "lastOpenFiles": [
+    "ЕГЭ/Дни/2026_04_10.md",
+    "ЕГЭ/subjects/russ/russ_stat.md",
+    "ЕГЭ/subjects/перевод заданий и баллов.md",
+    "Свои заметки/Фильмы.md",
     "ЕГЭ/subjects/mat/mat_stat.md",
     "ЕГЭ/subjects/infa/infa_stat.md",
-    "ЕГЭ/Дни/2026_04_10.md",
     "Новый день.md",
-    "ЕГЭ/subjects/перевод заданий и баллов.md",
     "ЕГЭ/календарь.md.md",
     "ЕГЭ/Дни/2026_04_08.md",
-    "Свои заметки/Фильмы.md",
-    "ЕГЭ/subjects/russ/russ_stat.md",
     "ЕГЭ/Дни/2026_04_09.md",
     "ЕГЭ/subjects/russ/r_zad12.md",
     "ЕГЭ/subjects/russ/r_zad10.md",
