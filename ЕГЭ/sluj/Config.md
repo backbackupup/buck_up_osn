@@ -1,7 +1,7 @@
 ---
 shab_edin: 1.5
 shab_mnoj: 0.75
-name_base: BASED12
+name_base: BASED13
 data_do: 2026_05_06
 shet_mess: 192
 mat_zad_plan:
