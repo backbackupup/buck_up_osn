@@ -27,12 +27,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "ЕГЭ/subjects/mat/mat_stat.md",
+                "file": "ЕГЭ/Дни/2026_04_22.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "mat_stat"
+              "title": "2026_04_22"
             }
           },
           {
@@ -78,7 +78,7 @@
             }
           }
         ],
-        "currentTab": 1
+        "currentTab": 2
       }
     ],
     "direction": "vertical"
@@ -263,17 +263,18 @@
       "templater-obsidian:Templater": false
     }
   },
-  "active": "40a73492f53fefc0",
+  "active": "43637850844a7924",
   "lastOpenFiles": [
+    "ЕГЭ/subjects/russ/russ_stat.md",
+    "ЕГЭ/Дни/2026_04_22.md",
+    "Новый день.md",
+    "ЕГЭ/календарь.md.md",
+    "ЕГЭ/subjects/mat/mat_stat.md",
     "ЕГЭ/subjects/перевод заданий и баллов.md",
     "ЕГЭ/Дни/2026_04_21.md",
     "Свои заметки/Буфер/Базис буфер.md",
-    "ЕГЭ/календарь.md.md",
-    "ЕГЭ/subjects/russ/russ_stat.md",
     "Свои заметки/Проекты/МВУ/Пример работы.md",
-    "ЕГЭ/subjects/mat/mat_stat.md",
     "ЕГЭ/subjects/mat/m_zad10.md",
-    "Новый день.md",
     "ЕГЭ/sluj/cash/BASED13.md",
     "ЕГЭ/Дни/2026_04_16.md",
     "ЕГЭ/subjects/infa/infa_stat.md",
@@ -290,7 +291,6 @@
     "ЕГЭ/Дни/2026_04_14.md",
     "ЕГЭ/subjects/russ/r_zad11.md",
     "ЕГЭ/subjects/mat/m_zad2.md",
-    "ЕГЭ/Дни/2026_02_05.md",
     "Свои заметки/Проекты/Изображения/463401a27aad67ef067aec2c76d06819382b4995.png",
     "ter",
     "библиотека",
